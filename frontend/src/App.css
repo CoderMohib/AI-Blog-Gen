@@ -1,22 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
   /* Light theme - modern, clean */
-  --color-background: #F5F5F5;       /* very light gray for background */
-  --color-card: #FFFFFF;             /* pure white for cards */
-  --color-text: #111827;             /* almost black for primary text */
-  --color-text-secondary: #4B5563;   /* medium gray for secondary text */
-  --color-primary: #2563EB;          /* modern blue accent */
-  --color-border: #E5E7EB;           /* subtle gray border */
-}
+  --color-background: #f5f5f5; /* very light gray for background */
+  --color-card: #ffffff; /* pure white for cards */
+   --color-card-soft: #f9fafb; /* softer than background */
+  --color-card-muted: #f3f4f6;
+    --color-card-dark-soft: #1a1a1a; /* softer than black */
+  --color-card-dark-muted: #222222; /* muted dark */
+  --color-text: #111827; /* almost black for primary text */
+  --color-text-secondary: #4b5563; /* medium gray for secondary text */
+  --color-primary: #2563eb; /* modern blue accent */
+  --color-border: #e5e7eb; /* subtle gray border */
+  --color-button-primary-bg: #2563eb; /* same as --color-primary */
+  --color-button-primary-text: #ffffff; /* white text */
+  --color-button-primary-hover: #1d4ed8; /* darker blue on hover */
 
+  --color-button-secondary-bg: #e5e7eb; /* light gray */
+  --color-button-secondary-text: #111827; /* dark text */
+  --color-button-secondary-hover: #d1d5db; /* slightly darker gray */
+
+  --color-button-border: #d1d5db;
+  --font-sans: 'Poppins', sans-serif;
+  --shadow-color: rgba(0, 0, 0, 0.2);
+
+  --color-button-dark-bg: #111827;         /* dark navy/gray button */
+  --color-button-dark-text: #ffffff;       /* white text */
+  --color-button-dark-hover: #1f2937;      /* slightly lighter hover */
+
+  --color-button-light-bg: #ffffff;        /* light button */
+  --color-button-light-text: #111827;      /* dark text */
+  --color-button-light-hover: #f3f4f6;
+}
 /* Dark theme - true black */
 .dark {
-  --color-background: #000000;        /* true black */
-  --color-card: #121212;              /* slightly lighter for cards */
-  --color-text: #FFFFFF;              /* white for main text */
-  --color-text-secondary: #B0B0B0;    /* gray for secondary text */
-  --color-primary: #1E90FF;           /* bright blue accent */
-  --color-border: #222222;            /* dark border for separation */
-}
+  --color-background: #000000; /* true black */
+  --color-card: #121212; /* slightly lighter for cards */
+ --color-card-soft: #181818;
+  --color-card-muted: #202020;
+  --color-card-dark-soft: #121212; /* softer than black in dark mode */
+  --color-card-dark-muted: #1a1a1a; /* muted dark in dark mode */
+  --color-text: #ffffff; /* white for main text */
+  --color-text-secondary: #b0b0b0; /* gray for secondary text */
+  --color-primary: #1e90ff; /* bright blue accent */
+  --color-border: #222222; /* dark border for separation */
+  --color-button-primary-bg: #1e90ff; /* bright blue */
+  --color-button-primary-text: #ffffff; /* white text */
+  --color-button-primary-hover: #1c86ee; /* slightly darker blue */
 
+  --color-button-secondary-bg: #222222; /* dark gray for neutral buttons */
+  --color-button-secondary-text: #ffffff; /* white text */
+  --color-button-secondary-hover: #333333; /* lighter hover */
+
+  --color-button-border: #444444; /* subtle border */
+  --shadow-color: rgba(255, 255, 255, 0.2); 
+   --color-button-dark-bg: #ffffff;          /* white button on dark bg */
+  --color-button-dark-text: #000000;        /* black text */
+  --color-button-dark-hover: #f3f4f6;       /* light hover */
+
+  --color-button-light-bg: #121212;         /* dark button on dark bg */
+  --color-button-light-text: #ffffff;       /* white text */
+  --color-button-light-hover: #1a1a1a;      /* darker hover */
+}
+@layer base {
+   html, body {
+    font-family: 'Poppins', sans-serif;
+  }
+}
