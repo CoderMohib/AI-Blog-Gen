@@ -14,7 +14,7 @@ function App() {
         <Routes>
           {/* Unprotected Routes */}
           <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
+          <Route path="/sign-up" element={<SignUp />} />
     
           {/* Protected Routes */}
           <Route

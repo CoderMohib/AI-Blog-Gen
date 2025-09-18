@@ -1,3 +1,4 @@
+import ReservedRights from "@/components/atoms/ReservedRights";
 import LoginForm from "@/components/forms/LoginForm";
 import SideSection from "@/components/SideSection";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -12,6 +13,7 @@ const Login = () => {
           <div className="w-full max-w-lg">
             <LoginForm />
           </div>
+          <ReservedRights className="absolute bottom-6 left-1/2 transform -translate-x-1/2" />
         </div>
       </div>
     </div>

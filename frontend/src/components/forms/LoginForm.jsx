@@ -1,85 +1,83 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { Formik, Form } from "formik";
+import * as Yup from "yup";
+import Input from "@/components/atoms/Input";
+import Button from "@/components/atoms/FormSubmitBtn";
+import { AtSign, Lock, Eye } from "lucide-react";
 
 const LoginForm = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const { login } = useAuth();
-
   const navigate = useNavigate();
+  const { login } = useAuth();
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Call API here normally
-    login({ email });
-    navigate("/dashboard");
-  };
+  // Validation schema
+  const validationSchema = Yup.object({
+    email: Yup.string().email("Invalid email").required("Email is required"),
+    password: Yup.string().min(8, "Password must be at least 8 characters").required("Password is required"),
+  });
 
   return (
-    <div className="w-full">
-      <form
-        onSubmit={handleSubmit}
-        className="
-          rounded-2xl
-          p-3 
-          md:p-8 
-          flex flex-col 
-          gap-6
-        "
-      >
-        <h2 className="text-3xl font-bold text-text text-center">Login</h2>
+    <Formik
+      initialValues={{ email: "", password: "" }}
+      validationSchema={validationSchema}
+      onSubmit={(values) => {
+        login({ email: values.email });
+        navigate("/dashboard");
+      }}
+    >
+      {({ values, handleChange, errors, touched,isSubmitting }) => (
+        <Form className="rounded-2xl p-3 md:p-8 flex flex-col gap-4  sm:gap-6 w-full">
+          <h2 className="text-2xl sm:text-3xl font-bold text-text text-center">Login</h2>
 
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="
-            w-full px-4 py-3 rounded-full bg-card-soft  text-text  placeholder:text-text-secondary border border-border focus:outline-none focus:ring-2 focus:ring-button-border transition
-          "
-        />
+          {/* Email Input */}
+          <div>
+          <Input
+            name="email"
+            type="email"
+            placeholder="Email"
+            value={values.email}
+            onChange={handleChange}
+            icon={AtSign}
+            className={errors.email && touched.email ? "border-red-500" : ""}
+          />
+          {errors.email && touched.email && (
+            <p className="text-red-500 text-sm ml-4 mt-1.5">{errors.email}</p>
+          )}
+          </div>
 
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full px-4 
-            py-3 rounded-full bg-card-soft  text-text  placeholder:text-text-secondary border border-border focus:outline-none focus:ring-2 focus:ring-button-border transition
-          "
-        />
+          {/* Password Input */}
+          <div>
+          <Input
+            name="password"
+            type={showPassword ? "text" : "password"}
+            placeholder="Password"
+            value={values.password}
+            onChange={handleChange}
+            icon={showPassword ? Eye : Lock}
+            onIconClick={() => setShowPassword((prev) => !prev)}
+            className={errors.password && touched.password ? "border-red-500" : ""}
+          />
+          {errors.password && touched.password && (
+            <p className="text-red-500 text-sm ml-4 mt-1.5">{errors.password}</p>
+          )}
+          </div>
 
-        <button
-          type="submit"
-          className="
-            w-full 
-            py-3 
-            rounded-full
-            bg-button-dark-hover
-            text-button-dark-text
-            border border-button-border
-            hover:bg-card-muted
-            hover:text-text
-            font-medium 
-            transition-colors 
-            cursor-pointer
-          "
-        >
-          Login
-        </button>
+          <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Logging in..." : "Login"}</Button>
 
-        <p className="text-center text-text-secondary text-sm">
-          Don’t have an account?{" "}
-          <Link
-            to="/signup"
-            className="text-text hover:underline transition font-bold"
-          >
-            Sign up
-          </Link>
-        </p>
-      </form>
-    </div>
+          <p className="text-center text-text-secondary text-sm">
+            Don’t have an account?{" "}
+            <Link
+              to="/sign-up"
+              className="text-text hover:underline transition font-bold"
+            >
+              Sign up
+            </Link>
+          </p>
+        </Form>
+      )}
+    </Formik>
   );
 };
 
