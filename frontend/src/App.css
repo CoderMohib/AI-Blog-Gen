@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+@theme {
+  /* Light theme - modern, clean */
+  --color-background: #F5F5F5;       /* very light gray for background */
+  --color-card: #FFFFFF;             /* pure white for cards */
+  --color-text: #111827;             /* almost black for primary text */
+  --color-text-secondary: #4B5563;   /* medium gray for secondary text */
+  --color-primary: #2563EB;          /* modern blue accent */
+  --color-border: #E5E7EB;           /* subtle gray border */
+}
+
+/* Dark theme - true black */
+.dark {
+  --color-background: #000000;        /* true black */
+  --color-card: #121212;              /* slightly lighter for cards */
+  --color-text: #FFFFFF;              /* white for main text */
+  --color-text-secondary: #B0B0B0;    /* gray for secondary text */
+  --color-primary: #1E90FF;           /* bright blue accent */
+  --color-border: #222222;            /* dark border for separation */
+}
+
