@@ -8,8 +8,8 @@ export default function ThemeToggle({ className = "" }) {
     <button
       onClick={() => setIsDark(!isDark)}
       className={`
-        flex items-center gap-2 
-        px-6 py-1.5 text-[18px] rounded-xl
+        flex items-center gap-1 md:gap-2 
+        px-6 py-1.5 text-[16px] md:text-[18px] rounded-xl
          text-text
         cursor-pointer
         ${className}
@@ -17,11 +17,11 @@ export default function ThemeToggle({ className = "" }) {
     >
       {isDark ? (
         <>
-          <Moon className="w-6 h-6" /> <span>Dark</span>
+          <Moon className="w-5 h-5 md:w-6 md:h-6" /> <span>Dark</span>
         </>
       ) : (
         <>
-          <Sun className="w-6 h-6" /> <span>Light</span>
+          <Sun className="w-5 h-5 md:w-6 md:h-6" /> <span>Light</span>
         </>
       )}
     </button>

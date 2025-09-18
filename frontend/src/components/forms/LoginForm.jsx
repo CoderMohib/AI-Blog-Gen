@@ -36,16 +36,7 @@ const LoginForm = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="
-            w-full 
-            px-4 
-            py-3 
-            rounded-full
-            bg-card-soft 
-            text-text 
-            placeholder:text-text-secondary 
-            border border-border 
-            focus:outline-none focus:ring-2 focus:ring-button-border
-            transition
+            w-full px-4 py-3 rounded-full bg-card-soft  text-text  placeholder:text-text-secondary border border-border focus:outline-none focus:ring-2 focus:ring-button-border transition
           "
         />
 
@@ -54,17 +45,8 @@ const LoginForm = () => {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="
-            w-full 
-            px-4 
-            py-3 
-            rounded-full
-            bg-card-soft 
-            text-text 
-            placeholder:text-text-secondary 
-            border border-border 
-            focus:outline-none focus:ring-2 focus:ring-button-border
-            transition
+          className="w-full px-4 
+            py-3 rounded-full bg-card-soft  text-text  placeholder:text-text-secondary border border-border focus:outline-none focus:ring-2 focus:ring-button-border transition
           "
         />
 

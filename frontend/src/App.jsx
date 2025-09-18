@@ -4,8 +4,8 @@ import { AuthProvider } from "./utils/context/AuthContect";
 import ProtectedRoute from "./utils/ProtectedRoute";
 
 import Login from "./pages/Login";
-import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
+import SignUp from "./pages/Signup";
 
 function App() {
   return (
@@ -14,17 +14,18 @@ function App() {
         <Routes>
           {/* Unprotected Routes */}
           <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-
+          <Route path="/signup" element={<SignUp />} />
+    
           {/* Protected Routes */}
           <Route
-            path="/dashboard"
+            path="/"
             element={
               <ProtectedRoute>
                 <Dashboard />
               </ProtectedRoute>
             }
           />
+          
 
           <Route path="*" element={<Login />} />
         </Routes>
