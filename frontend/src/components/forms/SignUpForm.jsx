@@ -5,6 +5,7 @@ import * as Yup from "yup";
 import Input from "@/components/atoms/Input";
 import Button from "@/components/atoms/FormSubmitBtn";
 import { User, AtSign, Lock, Phone, Eye } from "lucide-react";
+import api from "@/utils/Api/axiosInstance";
 
 const SignUpForm = () => {
   const navigate = useNavigate();
@@ -21,8 +22,15 @@ const SignUpForm = () => {
     },
   ];
   const validationSchema = Yup.object({
-    fullName: Yup.string().required("Full Name is required"),
-    username: Yup.string().required("Username is required"),
+    fullName: Yup.string()
+      .required("Full Name is required")
+      .min(5, "Full Name must be at least 5 characters")
+      .max(20, "Full Name cannot exceed 20 characters"),
+
+    username: Yup.string()
+      .required("Username is required")
+      .min(5, "Username must be at least 5 characters")
+      .max(15, "Username cannot exceed 15 characters"),
     email: Yup.string().email("Invalid email").required("Email is required"),
     password: Yup.string()
       .required("Password is required")
@@ -41,7 +49,20 @@ const SignUpForm = () => {
       .matches(/^\d{10,15}$/, "Phone number is invalid")
       .required("Phone number is required"),
   });
-
+  const handleSubmit = async (values, { setSubmitting }) => {
+    setSubmitting(true);
+    console.log(values);
+    try {
+      const res = await api.post("/api/register", values); // send all form values
+      console.log(res.data);
+      navigate("/login");
+    } catch (err) {
+      console.error(err.response?.data || err);
+      alert(err.response?.data?.message || "Registration failed");
+    } finally {
+      setSubmitting(false);
+    }
+  };
   return (
     <Formik
       initialValues={{
@@ -53,18 +74,9 @@ const SignUpForm = () => {
         phone: "",
       }}
       validationSchema={validationSchema}
-      onSubmit={(values, { setSubmitting }) => {
-        // This is called automatically when submit starts
-        setSubmitting(true); // optional, Formik sets it automatically
-
-        // Simulate API call
-        setTimeout(() => {
-          console.log(values);
-          setSubmitting(false); // stop submitting
-        }, 1000);
-      }}
+      onSubmit={handleSubmit}
     >
-      {({ values, handleChange, errors, touched,isSubmitting }) => (
+      {({ values, handleChange, errors, touched, isSubmitting }) => (
         <Form className="rounded-2xl  flex flex-col gap-4 sm:gap-6 p-3">
           <h2 className="text-2xl sm:text-3xl font-bold text-text text-center">
             Sign Up
