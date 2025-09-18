@@ -1,19 +1,27 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
 const userSchema = new mongoose.Schema(
   {
+    fullName: {
+      type: String,
+      required: [true, "Full Name is required"],
+      trim: true,
+      minlength: [5, "Full Name must be at least 5 characters long"],
+      maxlength: [20, "Full Name cannot exceed 20 characters"],
+    },
     username: {
       type: String,
       required: [true, "Username is required"],
-      minlength: [3, "Username must be at least 3 characters long"],
+      minlength: [5, "Username must be at least 5 characters long"],
       maxlength: [15, "Username cannot exceed 15 characters"],
-      unique: [true,"Username is already exist"],
+      unique: [true, "Username already exists"],
       trim: true,
     },
     email: {
       type: String,
       required: [true, "Email is required"],
-      unique: true,
+      unique: [true, "Email already exists"],
       trim: true,
       lowercase: true,
     },
@@ -22,17 +30,10 @@ const userSchema = new mongoose.Schema(
       required: [true, "Password is required"],
       minlength: [6, "Password must be at least 6 characters long"],
     },
-    dateOfBirth: {
-      type: Date,
-      required: [true, "Date of birth is required"],
-    },
-    gender: {
+    phone: {
       type: String,
-      enum: {
-        values: ["Male", "Female", "Other"],
-        message: "Gender must be Male, Female, or Other",
-      },
-      required: [true, "Gender is required"],
+      required: [true, "Phone number is required"],
+      unique: [true, "Phone number already exists"],
     },
     createdAt: {
       type: Date,
@@ -41,16 +42,20 @@ const userSchema = new mongoose.Schema(
   },
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
-userSchema.virtual("age").get(function () {
-  if (!this.dateOfBirth) return null;
 
-  const today = new Date();
-  let age = today.getFullYear() - this.dateOfBirth.getFullYear();
-  const m = today.getMonth() - this.dateOfBirth.getMonth();
-  if (m < 0 || (m === 0 && today.getDate() < this.dateOfBirth.getDate())) {
-    age--;
-  }
-  return age;
+// Pre-save hook to hash password
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
 });
-const User = mongoose.model("Users", userSchema);
+
+// Method to compare password during login
+userSchema.methods.comparePassword = async function (enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
+};
+
+const User = mongoose.model("User", userSchema);
 module.exports = User;

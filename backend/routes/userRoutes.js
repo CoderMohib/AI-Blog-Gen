@@ -7,13 +7,14 @@ const getUserData = require("../controllers/getUserController");
 const verifyRefreshToken = require("../middleware/verifyRefreshToken");
 const refreshToken = require("../controllers/refreshTokenController");
 const deleteUser = require("../controllers/deleteUserController");
+const validatorRegister = require("../middleware/validatorRegister");
 const {
   addReminder,
   getReminders,
   updateReminder,
   deleteReminder,
 } = require("../controllers/reminderController");
-router.post("/api/register", register);
+router.post("/api/register", validatorRegister, register);
 router.post("/api/login", login);
 router.get("/api/profile", authUser, getUserData);
 router.post("/api/refresh", verifyRefreshToken, refreshToken);
