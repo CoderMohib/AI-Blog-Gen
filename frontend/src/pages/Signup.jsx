@@ -13,6 +13,7 @@ const SignUp = () => {
           <div className="w-full flex-1 flex items-center justify- max-w-lg">
             <div className="w-full h-full flex flex-col justify-center max-w-lg">
               <SignUpForm />
+              
             </div>
           </div>
           <ReservedRights />
