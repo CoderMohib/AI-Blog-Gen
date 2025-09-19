@@ -35,6 +35,8 @@ const userSchema = new mongoose.Schema(
       required: [true, "Phone number is required"],
       unique: [true, "Phone number already exists"],
     },
+    isActive: { type: Boolean, default: false },
+    activationToken: { type: String },
     createdAt: {
       type: Date,
       default: Date.now,

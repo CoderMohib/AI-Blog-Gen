@@ -77,7 +77,7 @@ const SignUpForm = () => {
       onSubmit={handleSubmit}
     >
       {({ values, handleChange, errors, touched, isSubmitting }) => (
-        <Form className="rounded-2xl  flex flex-col gap-4 sm:gap-6 p-3">
+        <Form className="rounded-2xl  flex flex-col gap-4 sm:gap-6 p-3 w-full">
           <h2 className="text-2xl sm:text-3xl font-bold text-text text-center">
             Sign Up
           </h2>
