@@ -10,8 +10,8 @@ const SignUp = () => {
         <SideSection />
         <div className="w-full min-h-[650px]  sm:min-h-[650px] lg:w-1/2 flex flex-col items-center justify-center md:p-6 relative ">
           <ThemeToggle className="absolute right-0 top-4 md:right-3" />
-          <div className="flex-1 flex items-center justify-center">
-            <div className="w-full h-full flex flex-col justify-center">
+          <div className="w-full flex-1 flex items-center justify- max-w-lg">
+            <div className="w-full h-full flex flex-col justify-center max-w-lg">
               <SignUpForm />
             </div>
           </div>

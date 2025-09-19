@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Blog Generator - Activation</title>
+  </head>
+  <body style="font-family: Arial, sans-serif; background: #1a1a1a; padding: 20px; margin: 0;">
+    <div style="max-width: 600px; margin: auto; background: #2c2c2c; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); text-align: center;">
+      
+      <!-- Logo -->
+      <div style="margin-bottom: 20px;">
+        <img src="{{logoUrl}}" alt="AI Blog Generator Logo" width="150" style="display:block; margin:auto;" />
+      </div>
+      
+      <!-- Heading -->
+      <h2 style="color: #ffffff; margin-bottom: 15px;">Welcome, {{username}}! 🎉</h2>
+      
+      <!-- Text -->
+      <p style="font-size: 15px; color: #cccccc; line-height: 1.6;">
+        Thank you for registering with <strong>AI Blog Generator</strong>.
+      </p>
+      <p style="font-size: 15px; color: #cccccc; line-height: 1.6;">
+        Please click the button below to activate your account:
+      </p>
+      
+      <!-- Button (bulletproof for email clients) -->
+      <table cellspacing="0" cellpadding="0" border="0" align="center" style="margin-top: 25px;">
+        <tr>
+          <td align="center" bgcolor="#000000" style="border-radius: 50px;">
+            <a href="{{activationLink}}" 
+              style="display: inline-block; padding: 14px 28px; font-size: 16px; font-weight: bold; color: #ffffff; text-decoration: none; border-radius: 50px;">
+              Activate Account
+            </a>
+          </td>
+        </tr>
+      </table>
+      
+      <!-- Footer -->
+      <div style="margin-top: 30px; font-size: 12px; color: #888888;">
+        <p>If you didn’t register, you can safely ignore this email.</p>
+      </div>
+    </div>
+  </body>
+</html>
