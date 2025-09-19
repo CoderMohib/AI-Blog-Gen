@@ -6,10 +6,12 @@ import Input from "@/components/atoms/Input";
 import Button from "@/components/atoms/FormSubmitBtn";
 import { User, AtSign, Lock, Phone, Eye } from "lucide-react";
 import api from "@/utils/Api/axiosInstance";
+import { useToast } from "@/utils/context/ToastContext";
 
 const SignUpForm = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const { showToast } = useToast();
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const passwordRules = [
     { regex: /.{8,}/, message: "At least 8 characters" },
@@ -49,16 +51,23 @@ const SignUpForm = () => {
       .matches(/^\d{10,15}$/, "Phone number is invalid")
       .required("Phone number is required"),
   });
-  const handleSubmit = async (values, { setSubmitting }) => {
+  const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     setSubmitting(true);
     console.log(values);
     try {
       const res = await api.post("/api/register", values); // send all form values
-      console.log(res.data);
-      navigate("/login");
+      resetForm();
+      showToast(
+        res.data.message || "User registered successfully",
+        "success",
+        () => navigate("/login")
+      );
     } catch (err) {
       console.error(err.response?.data || err);
-      alert(err.response?.data?.message || "Registration failed");
+      showToast(
+        err?.message || "Registration failed",
+        "error" // type
+      );
     } finally {
       setSubmitting(false);
     }
