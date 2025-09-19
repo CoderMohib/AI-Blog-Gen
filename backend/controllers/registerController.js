@@ -24,7 +24,7 @@ const register = async (req, res) => {
       { username, activationLink }
     );
     res.status(201).json({
-      message: "User registered successfully",
+      message: "Account registered successfully. Please check your email to activate your account.",
       userId: newUser._id,
     });
   } catch (err) {
