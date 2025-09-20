@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import SignUp from "./pages/Signup";
 import { ToastProvider } from "./utils/context/ToastContext";
 import ActivationPage from "./pages/ActivationPage";
+import ForgetPassword from "./pages/ForgotPassword";
 
 function App() {
   return (
@@ -19,6 +20,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/auth/activate/:token" element={<ActivationPage />} />
+          <Route path="/forgot-password" element={<ForgetPassword />} />
+          <Route path="/forgot-password/:token" element={<ForgetPassword />} />
           {/* Protected Routes */}
           <Route
             path="/"
