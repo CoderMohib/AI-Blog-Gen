@@ -53,7 +53,6 @@ const SignUpForm = () => {
   });
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     setSubmitting(true);
-    console.log(values);
     try {
       const res = await api.post("/api/register", values); // send all form values
       resetForm();
@@ -63,7 +62,6 @@ const SignUpForm = () => {
         () => navigate("/login")
       );
     } catch (err) {
-      console.error(err.response?.data || err);
       showToast(
         err?.message || "Registration failed",
         "error" // type

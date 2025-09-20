@@ -19,7 +19,7 @@ const Input = ({
           }`}
           onClick={onIconClick}
         >
-          <Icon className="text-text-secondary w-5 h-5" />
+          <Icon className="text-text-secondary w-4 h-4 sm:w-5 sm:h-5" />
         </div>
       )}
       <input
@@ -30,7 +30,7 @@ const Input = ({
         onChange={onChange}
         className={`
           w-full 
-          pl-12 pr-2 py-3 
+          pl-10 pr-2 py-2 text-sm sm:pl-12 sm:py-3 sm:text-base
           rounded-full
           bg-card-soft 
           text-text 
