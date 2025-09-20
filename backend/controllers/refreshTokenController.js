@@ -1,5 +1,5 @@
 const User = require("../model/userModel");
-const { generateAccessToken } = require("../utils/tokenGenerator");
+const { generateAccessToken } = require("../utils/jwtTokenGenerator");
 
 const refreshToken = async (req, res) => {
   const decoded = req.decoded;

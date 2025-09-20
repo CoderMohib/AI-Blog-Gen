@@ -1,7 +1,7 @@
 const User = require("../model/userModel");
 const Verification = require("../model/verificationModel");
 const { sendEmail } = require("../utils/smtp");
-const crypto = require("crypto");
+const { generateToken } = require("../utils/tokenGenerate");
 
 const validateLogin = async (req, res, next) => {
   try {
@@ -35,7 +35,7 @@ const validateLogin = async (req, res, next) => {
       if (shouldRegenerate) {
         if (verification) await verification.deleteOne();
 
-        const token = crypto.randomBytes(32).toString("hex");
+        const token = generateToken();
         verification = new Verification({
           userId: user._id,
           type: "activation",

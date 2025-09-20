@@ -1,7 +1,7 @@
 const User = require("../model/userModel");
 const Verification = require("../model/verificationModel");
 const { sendEmail } = require("../utils/smtp");
-const crypto = require("crypto");
+const { generateToken } = require("../utils/tokenGenerate");
 
 const register = async (req, res) => {
   try {
@@ -19,7 +19,7 @@ const register = async (req, res) => {
     await newUser.save();
 
     // 2. Create activation token
-    const activationToken = crypto.randomBytes(32).toString("hex");
+    const token = generateToken();
     const verification = await Verification.create({
       userId: newUser._id,
       type: "activation",

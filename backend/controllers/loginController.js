@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs");
 const {
   generateAccessToken,
   generateRefreshToken,
-} = require("../utils/tokenGenerator");
+} = require("../utils/jwtTokenGenerator");
 
 const login = async (req, res) => {
   try {
