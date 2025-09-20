@@ -20,20 +20,15 @@ const ResetPasswordEmail = () => {
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     setSubmitting(true);
     try {
-      const res = await api.post("/api/login", {
+      const res = await api.post("/api/forgot-password", {
         email: values.email,
       });
-
-      // Save tokens
-      localStorage.setItem("accessToken", res.data.token);
-      localStorage.setItem("refreshToken", res.data.refreshToken);
-
       resetForm();
 
       // Show success and redirect
-      showToast(res.data.message || "Login successful", "success");
+      showToast(res.data.message || "Password reset email sent", "success");
     } catch (err) {
-      showToast(err?.message || "Login failed", "error");
+      showToast(err?.message || "Password reset failed", "error");
     } finally {
       setSubmitting(false);
     }
@@ -41,7 +36,7 @@ const ResetPasswordEmail = () => {
 
   return (
     <Formik
-      initialValues={{ email: "", password: "" }}
+      initialValues={{ email: "" }}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
     >

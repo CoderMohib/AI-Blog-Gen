@@ -1,4 +1,5 @@
 import ResetPasswordEmail from "@/components/forms/ResetPasswordEmailForm";
+import ResetPassword from "@/components/forms/ResetPasswordForm";
 import AuthLayout from "@/layout/AuthLayout";
 import { useParams } from "react-router-dom";
 const ForgetPassword = () => {
@@ -6,7 +7,7 @@ const ForgetPassword = () => {
   return (
     <AuthLayout>
       <div className="w-full max-w-lg">
-        {token ? <ResetPasswordForm /> : <ResetPasswordEmail />}
+        {token ? <ResetPassword token={token} /> : <ResetPasswordEmail />}
       </div>
     </AuthLayout>
   );

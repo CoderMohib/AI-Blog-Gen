@@ -8,7 +8,7 @@ import { Lock, Eye } from "lucide-react";
 import api from "@/utils/Api/axiosInstance";
 import { useToast } from "@/utils/context/ToastContext";
 
-const ResetPassword = () => {
+const ResetPassword = ({ token }) => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const { showToast } = useToast();
@@ -41,16 +41,19 @@ const ResetPassword = () => {
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     setSubmitting(true);
     try {
-      const res = await api.post("/api/register", values); // send all form values
+      const res = await api.post(`/api/reset-password/${token}`, {
+        password: values.password,
+        confirmPassword: values.confirmPassword,
+      }); // send all form values
       resetForm();
       showToast(
-        res.data.message || "User registered successfully",
+        res.data.message || "Password reset successful",
         "success",
         () => navigate("/login")
       );
     } catch (err) {
       showToast(
-        err?.message || "Registration failed",
+        err?.message || "Error resetting password",
         "error" // type
       );
     } finally {
@@ -132,7 +135,10 @@ const ResetPassword = () => {
           </Button>
 
           <p className="text-center text-text-secondary text-sm">
-            <Link to="/forgot-password" className="text-text hover:underline font-bold">
+            <Link
+              to="/forgot-password"
+              className="text-text hover:underline font-bold"
+            >
               Find Your Account?
             </Link>
           </p>
