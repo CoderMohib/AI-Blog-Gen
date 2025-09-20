@@ -31,10 +31,10 @@ async function sendEmail(to, subject, htmlFilePath, replacements = {}) {
     });
 
     console.log("✅ Email sent successfully: " + info.messageId);
-    return info;
+    return {success: true};
   } catch (err) {
     console.error("❌ Error sending email:", err);
-    throw err; 
+    return {success: false, error: err};
   }
 }
 

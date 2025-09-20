@@ -2,25 +2,14 @@ const express = require("express");
 const router = express.Router();
 const login = require("../controllers/loginController");
 const register = require("../controllers/registerController");
-const authUser = require("../middleware/user.auth");
-const getUserData = require("../controllers/getUserController");
 const verifyRefreshToken = require("../middleware/verifyRefreshToken");
 const refreshToken = require("../controllers/refreshTokenController");
-const deleteUser = require("../controllers/deleteUserController");
 const validatorRegister = require("../middleware/validatorRegister");
-const {
-  addReminder,
-  getReminders,
-  updateReminder,
-  deleteReminder,
-} = require("../controllers/reminderController");
+
+const { validateLogin } = require("../middleware/validateLogin");
+const { activateAccount } = require("../controllers/activationController");
 router.post("/api/register", validatorRegister, register);
-router.post("/api/login", login);
-router.get("/api/profile", authUser, getUserData);
+router.post("/api/login", validateLogin, login);
 router.post("/api/refresh", verifyRefreshToken, refreshToken);
-router.delete("/api/profile/delete", authUser, deleteUser);
-router.post("/api/profile/reminders", authUser, addReminder);
-router.get("/api/profile/reminders", authUser, getReminders);
-router.put("/api/profile/reminders/:id", authUser, updateReminder);
-router.delete("/api/profile/reminders/:id", authUser, deleteReminder);
+router.get("/api/auth/activate/:token", activateAccount);
 module.exports = router;
