@@ -2,7 +2,6 @@ const User = require("../model/userModel");
 const Verification = require("../model/verificationModel");
 const { sendEmail } = require("../utils/smtp");
 const { generateToken } = require("../utils/tokenGenerate");
-const bcrypt = require("bcryptjs");
 exports.forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -15,20 +14,30 @@ exports.forgotPassword = async (req, res) => {
         .json({ success: false, message: "Invalid User" });
     }
 
-    const token = generateToken();
-    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); 
-
-    // 3. Save token in Verification collection
-    const verification = new Verification({
+    // 2. Check if there's already an active reset token
+    let verification = await Verification.findOne({
       userId: user._id,
       type: "password_reset",
-      token,
-      expiresAt,
+      used: false,
+      expiresAt: { $gt: new Date() }, // not expired
     });
-    await verification.save();
+
+    if (!verification) {
+      // 3. If no active token, create a new one
+      const token = generateToken();
+      const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
+
+      verification = new Verification({
+        userId: user._id,
+        type: "password_reset",
+        token,
+        expiresAt,
+      });
+      await verification.save();
+    }
 
     // 4. Prepare reset link
-    const resetLink = `${process.env.FRONTEND_URL}/forgot-password/${token}`;
+    const resetLink = `${process.env.FRONTEND_URL}/forgot-password/${verification.token}`;
 
     // 5. Send reset email
     const emailResult = await sendEmail(
@@ -63,6 +72,7 @@ exports.forgotPassword = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
 
 exports.resetPassword = async (req, res) => {
   try {

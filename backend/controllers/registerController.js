@@ -23,12 +23,12 @@ const register = async (req, res) => {
     const verification = await Verification.create({
       userId: newUser._id,
       type: "activation",
-      token: activationToken,
+      token: token,
       expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // expires in 24h
     });
 
     // 3. Prepare activation link
-    const activationLink = `${process.env.FRONTEND_URL}/auth/activate/${activationToken}`;
+    const activationLink = `${process.env.FRONTEND_URL}/auth/activate/${token}`;
 
     // 4. Try sending email
     const result = await sendEmail(
