@@ -9,44 +9,56 @@ import SignUp from "./pages/Signup";
 import { ToastProvider } from "./utils/context/ToastContext";
 import ActivationPage from "./pages/ActivationPage";
 import ForgetPassword from "./pages/ForgotPassword";
-
+import Error404 from "./pages/error404";
+import { Navigate } from "react-router-dom";
+import PublicRoute from "./components/routes/PublicRoute";
+import DashboardLayout from "./layout/DashBoardLayout";
 function App() {
   return (
     <ToastProvider>
-    <AuthProvider>
-      <Router>
-        <Routes>
-          {/* Unprotected Routes */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/sign-up" element={<SignUp />} />
-          <Route path="/auth/activate/:token" element={<ActivationPage />} />
-          <Route path="/forgot-password" element={<ForgetPassword />} />
-          <Route path="/forgot-password/:token" element={<ForgetPassword />} />
-          {/* Protected Routes */}
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-          
+      <AuthProvider>
+        <Router>
+          <Routes>
+            {/* Unprotected Routes */}
+            <Route path="/" element={<Navigate to="/login" replace />} />
+            <Route
+              path="/login"
+              element={
+                <PublicRoute>
+                  <Login />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/sign-up"
+              element={
+                <PublicRoute>
+                  <SignUp />
+                </PublicRoute>
+              }
+            />
+            <Route path="/auth/activate/:token" element={<ActivationPage />} />
+            <Route path="/forgot-password" element={<ForgetPassword />} />
+            <Route
+              path="/forgot-password/:token"
+              element={<ForgetPassword />}
+            />
+            {/* Protected Routes */}
+            <Route
+              element={
+                <ProtectedRoute>
+                  <DashboardLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route path="/dashboard" element={<Dashboard />} />
+            </Route>
 
-          <Route path="*" element={<Login />} />
-        </Routes>
-      </Router>
-    </AuthProvider>
+            <Route path="*" element={<Error404 />} />
+          </Routes>
+        </Router>
+      </AuthProvider>
     </ToastProvider>
-    //  <div className="min-h-screen bg-background text-text flex flex-col items-center justify-center">
-    //   <div className="bg-card border border-border p-8 rounded-lg shadow-md">
-    //     <h1 className="text-3xl font-bold mb-4">AI Blog Generator</h1>
-    //     <p className="text-text-secondary mb-6">
-    //       This dashboard updates its theme automatically.
-    //     </p>
-    //     <ThemeToggle />
-    //   </div>
-    // </div>
   );
 }
 

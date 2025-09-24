@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Formik, Form } from "formik";
@@ -14,7 +14,7 @@ const LoginForm = () => {
   const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const { showToast } = useToast();
-  // Validation schema
+
   const validationSchema = Yup.object({
     email: Yup.string().email("Invalid email").required("Email is required"),
     password: Yup.string()
@@ -30,20 +30,17 @@ const LoginForm = () => {
       });
 
       // Save tokens
-      localStorage.setItem("accessToken", res.data.token);
-      localStorage.setItem("refreshToken", res.data.refreshToken);
-
+      login(res.data.user, res.data.token);
       resetForm();
-
       // Show success and redirect
-      showToast(res.data.message || "Login successful", "success");
+      // showToast(res.data.message || "Login successful", "success");
+      navigate("/dashboard");
     } catch (err) {
       showToast(err?.message || "Login failed", "error");
     } finally {
       setSubmitting(false);
     }
   };
-
   return (
     <Formik
       initialValues={{ email: "", password: "" }}
