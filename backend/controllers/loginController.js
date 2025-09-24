@@ -18,11 +18,23 @@ const login = async (req, res) => {
     // 2. Generate tokens
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
-
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true, // ❌ not accessible from JS
+      secure: process.env.NODE_ENV === "production", // ✅ only over HTTPS in prod
+      sameSite: "strict", // ✅ CSRF protection
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in ms
+    });
     res.status(200).json({
       message: "Login successful",
       token: accessToken,
-      refreshToken,
+      user: {
+        id: user._id,
+        email: user.email,
+        fullName: user.fullName,
+        username: user.username,
+        phone: user.phone,
+        // add only what you want frontend to have
+      },
     });
   } catch (err) {
     res.status(500).json({ message: "Login failed", error: err.message });

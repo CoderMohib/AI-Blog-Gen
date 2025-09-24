@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-
+const User = require("../model/userModel");
 const authUser = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
@@ -14,9 +14,14 @@ const authUser = async (req, res, next) => {
         .status(401)
         .json({ message: "Authorization token is  invalid!" });
     }
-    const decode = jwt.verify(token, process.env.JWT_SECRET);
-    
-    req.decode = decode;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const user = await User.findById(decoded.id).select("-password"); // exclude password
+    if (!user) {
+      return res.status(401).json({ message: "User no longer exists!" });
+    }
+
+    req.user = user;
     next();
   } catch (err) {
     res.status(401).json({ message: "Invalid or expired token" });

@@ -1,7 +1,8 @@
 const jwt = require("jsonwebtoken");
 
 const verifyRefreshToken = (req, res, next) => {
-  const { refreshToken } = req.body;
+  // 👇 get token from cookie instead of body
+  const refreshToken = req.cookies.refreshToken;
 
   if (!refreshToken) {
     return res.status(401).json({ message: "Refresh token required" });
