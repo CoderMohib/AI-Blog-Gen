@@ -33,6 +33,7 @@ const login = async (req, res) => {
         fullName: user.fullName,
         username: user.username,
         phone: user.phone,
+        profileImage: user.profileImage,
         // add only what you want frontend to have
       },
     });

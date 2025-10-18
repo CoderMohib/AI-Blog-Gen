@@ -7,6 +7,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [accessToken, setAccessToken] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
 
   // Load token from localStorage when app starts
   useEffect(() => {
@@ -20,6 +21,7 @@ export const AuthProvider = ({ children }) => {
       }
       setIsLoggedIn(true);
     }
+    setIsAuthLoading(false);
   }, []);
 
   // Login function
@@ -46,7 +48,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, accessToken, isLoggedIn, login, logout }}
+      value={{ user, accessToken, isLoggedIn,isAuthLoading, login, logout }}
     >
       {children}
     </AuthContext.Provider>

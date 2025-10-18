@@ -14,8 +14,8 @@
     "axios": "^1.12.2",
     "formik": "^2.4.6",
     "lucide-react": "^0.544.0",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "react-router-dom": "^7.9.1",
     "yup": "^1.7.0"
   },

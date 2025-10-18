@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { Outlet } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
 import { Home, User, Settings, Menu, LogOut, X } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import logo from "@/assets/mainlogo.png";
 import ThemeToggle from "@/components/ThemeToggle";
-
+import ProfileAvatar from "@/components/atoms/ProfileAvatar";
+import { useNavigate } from "react-router-dom";
 const DashboardLayout = () => {
-  const { logout } = useAuth();
+  const navigate = useNavigate();
+  const { logout, user } = useAuth();
   const [isOpen, setIsOpen] = useState(true);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
@@ -49,24 +51,54 @@ const DashboardLayout = () => {
 
         <nav className={`flex-1 ${isOpen ? "mt-12" : "mt-4"} space-y-2`}>
           {menuItems.map((item) => (
-            <a
+            <NavLink
               key={item.name}
-              href={item.path}
-              className={`flex items-center ${
-                isOpen ? "gap-3 px-5" : "justify-center"
-              } p-3 hover:bg-card-muted rounded-md cursor-pointer`}
+              to={item.path} // ✅ Instead of href
+              className={({ isActive }) =>
+                `flex items-center ${
+                  isOpen ? "gap-3 px-5" : "justify-center"
+                } p-3 rounded-md cursor-pointer transition-colors duration-150 ${
+                  isActive
+                    ? "bg-card-muted font-semibold"
+                    : "hover:bg-card-muted"
+                }`
+              }
             >
               {item.icon}
               {isOpen && <span>{item.name}</span>}
-            </a>
+            </NavLink>
           ))}
         </nav>
 
-        <div className="p-2 border-t border-border">
+        {/* Profile Section */}
+        <div className="py-2 border-t border-border">
+          <div
+            className={`flex items-center ${
+              isOpen ? "gap-3 px-3" : "flex-col"
+            } rounded-md cursor-pointer `}
+            onClick={() => {
+              navigate(`/profile/${user.id}`);
+            }}
+          >
+            <ProfileAvatar user={user} />
+
+            {isOpen && (
+              <div className="flex flex-col">
+                <span className="text-sm font-medium">
+                  {user?.fullName || "Guest User"}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  @{user.username}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Logout Button */}
           <button
             className={`flex items-center  ${
-              isOpen ? "p-3 px-2.5 gap-3" : "py-3 px-2"
-            } w-full hover:bg-card-muted rounded-md cursor-pointer `}
+              isOpen ? "px-5 gap-3" : " justify-center"
+            } w-full p-3 hover:bg-card-muted rounded-md mt-2 cursor-pointer`}
             onClick={() => logout()}
           >
             <LogOut />
@@ -105,19 +137,43 @@ const DashboardLayout = () => {
           {/* Navigation */}
           <nav className="mt-6 space-y-2">
             {menuItems.map((item) => (
-              <a
+              <NavLink
                 key={item.name}
-                href={item.path}
-                className="flex items-center gap-3 p-3 px-4.5 hover:bg-card-muted rounded-md"
+                to={item.path}
+                onClick={() => setIsMobileOpen(false)}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 p-3 px-4.5 rounded-md ${
+                    isActive
+                      ? "bg-card-muted font-semibold"
+                      : "hover:bg-card-muted"
+                  }`
+                }
               >
                 {item.icon}
                 <span>{item.name}</span>
-              </a>
+              </NavLink>
             ))}
           </nav>
 
           {/* Logout button pushed to bottom */}
-          <div className="mt-auto p-2 border-t border-border">
+          <div className="mt-auto p-2 space-y-2 border-t border-border">
+            <div
+              className={`flex items-center gap-3 p-1 rounded-md cursor-pointer `}
+              onClick={() => {
+                navigate(`/profile/${user.id}`);
+              }}
+            >
+              <ProfileAvatar user={user} />
+
+              <div className="flex flex-col">
+                <span className="text-sm font-medium">
+                  {user?.fullName || "Guest User"}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  @{user.username}
+                </span>
+              </div>
+            </div>
             <button
               className={`flex items-center
                 p-2 px-2.5 gap-3

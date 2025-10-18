@@ -13,6 +13,7 @@ import Error404 from "./pages/error404";
 import { Navigate } from "react-router-dom";
 import PublicRoute from "./components/routes/PublicRoute";
 import DashboardLayout from "./layout/DashBoardLayout";
+import UserProfile from "./pages/UserProfile";
 function App() {
   return (
     <ToastProvider>
@@ -52,6 +53,7 @@ function App() {
               }
             >
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/profile/:userId" element={<UserProfile />} />
             </Route>
 
             <Route path="*" element={<Error404 />} />

@@ -36,7 +36,8 @@ const LoginForm = () => {
       // showToast(res.data.message || "Login successful", "success");
       navigate("/dashboard");
     } catch (err) {
-      showToast(err?.message || "Login failed", "error");
+      console.log(err)
+      showToast(err?.response?.data?.message || "Login failed", "error");
     } finally {
       setSubmitting(false);
     }

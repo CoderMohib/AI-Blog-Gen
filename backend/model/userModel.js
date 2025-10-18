@@ -35,6 +35,34 @@ const userSchema = new mongoose.Schema(
       required: [true, "Phone number is required"],
       unique: [true, "Phone number already exists"],
     },
+    dob: {
+      type: Date,
+    },
+    country: {
+      type: String,
+      default: "Not specified",
+    },
+    bio: {
+      type: String,
+      maxlength: 500,
+      default: "",
+    },
+    profileImage: {
+      url: { type: String, default: "" }, // The image URL to display
+      public_id: { type: String, default: "" }, // The Cloudinary ID used for deletion
+    },
+    posts: {
+      type: Number,
+      default: 0,
+    },
+    followers: {
+      type: Number,
+      default: 0,
+    },
+    following: {
+      type: Number,
+      default: 0,
+    },
     isActive: { type: Boolean, default: false },
     createdAt: {
       type: Date,
