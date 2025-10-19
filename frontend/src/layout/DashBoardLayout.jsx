@@ -24,7 +24,7 @@ const DashboardLayout = () => {
       <div
         className={`
           ${isOpen ? "w-56" : "w-16"}
-          bg-card shadow-md transition-all duration-300 hidden md:flex flex-col
+          bg-card shadow-md transition-all duration-300 hidden lg:flex flex-col
         `}
       >
         {isOpen ? (
@@ -108,7 +108,7 @@ const DashboardLayout = () => {
       </div>
 
       {/* Mobile Sidebar Drawer */}
-      <div className="md:hidden">
+      <div className="lg:hidden">
         {/* Backdrop */}
         <div
           className={`fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 cursor-pointer ${
@@ -192,7 +192,7 @@ const DashboardLayout = () => {
         {/* Topbar */}
         <div className="flex items-center justify-between bg-card p-3 shadow z-30 sticky top-0">
           {/* Left side (mobile only) */}
-          <div className="flex items-center gap-2 md:hidden">
+          <div className="flex items-center gap-2 lg:hidden">
             <img src={logo} alt="MyApp" className="w-8 h-7 rounded" />
           </div>
 
@@ -203,7 +203,7 @@ const DashboardLayout = () => {
           <ThemeToggle />
           <button
             onClick={() => setIsMobileOpen(!isMobileOpen)}
-            className="md:hidden cursor-pointer p-2 rounded hover:bg-card-muted ml-2"
+            className="lg:hidden cursor-pointer p-2 rounded hover:bg-card-muted ml-2"
           >
             <Menu />
           </button>
