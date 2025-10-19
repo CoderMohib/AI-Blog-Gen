@@ -9,7 +9,7 @@ import SignUp from "./pages/Signup";
 import { ToastProvider } from "./utils/context/ToastContext";
 import ActivationPage from "./pages/ActivationPage";
 import ForgetPassword from "./pages/ForgotPassword";
-import Error404 from "./pages/error404";
+import Error404 from "./pages/Error404";
 import { Navigate } from "react-router-dom";
 import PublicRoute from "./components/routes/PublicRoute";
 import DashboardLayout from "./layout/DashBoardLayout";
