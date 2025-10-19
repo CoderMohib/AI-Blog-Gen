@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Camera, User, Trash2 } from "lucide-react";
 import api from "@/utils/Api/axiosInstance";
 import DotRingSpinner from "@/components/atoms/Loader";
@@ -203,7 +203,11 @@ const UserProfile = () => {
 
           {/* Bottom: Edit Button */}
           <div className="mt-6 flex justify-center lg:justify-stretch">
-            <Button>Edit Profile</Button>
+            <Button>
+              <Link to="/profile/edit" className="w-full">
+                Edit Profile
+              </Link>
+            </Button>
           </div>
         </div>
 
