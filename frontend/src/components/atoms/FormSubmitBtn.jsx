@@ -8,7 +8,8 @@ const Button = ({ type = "button", children, className = "", ...props }) => {
         w-full
         sm:w-50
         m-auto 
-        py-3 
+        py-2
+        sm:py-3 
         rounded-full
         bg-button-dark-hover 
         text-button-dark-text
