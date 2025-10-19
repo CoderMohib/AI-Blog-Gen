@@ -8,9 +8,11 @@ import Button from "@/components/atoms/FormSubmitBtn";
 import ProfileField from "@/components/profile/ProfileField";
 import ProfileSection from "@/components/profile/ProfileSection";
 import StatCard from "@/components/profile/StatCard";
+import { useToast } from "@/utils/context/ToastContext";
 
 const UserProfile = () => {
   const { id } = useParams();
+  const { showToast } = useToast();
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -47,22 +49,34 @@ const UserProfile = () => {
       const response = await api.patch("/api/user/profile-image", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
+
+      showToast("Profile image updated successfully", "success");
       setUser({ ...user, profileImage: response.data.profileImage });
       setSelectedImage(null);
     } catch (err) {
       console.error("Failed to upload image", err);
+      showToast(
+        err?.response?.data?.error || "Failed to update profile image",
+        "error"
+      );
     } finally {
       setUploading(false);
+      setIsModalOpen(false);
     }
   };
 
   const handleRemovePhoto = async () => {
     try {
       await api.delete("/api/user/profile-image");
+      showToast("Profile image deleted successfully", "success");
       setUser({ ...user, profileImage: null });
       setSelectedImage(null);
       setIsModalOpen(false);
     } catch (err) {
+      showToast(
+        err?.response?.data?.error || "Failed to delete profile image",
+        "error"
+      );
       console.error("Failed to remove image", err);
     }
   };
@@ -77,9 +91,9 @@ const UserProfile = () => {
           {/* Top: Avatar + Name */}
           <div className="flex flex-col items-center lg:items-center">
             <div className="w-28 sm:w-32 h-28 sm:h-32 mb-4 relative cursor-pointer">
-              {user.profileImage?.url || selectedImage ? (
+              {user.profileImage?.url ? (
                 <img
-                  src={selectedImage || user.profileImage.url}
+                  src={user.profileImage.url}
                   alt={user.fullName}
                   title="Click to view profile image"
                   className="w-full h-full object-cover rounded-full border-4 border-border"
@@ -92,7 +106,12 @@ const UserProfile = () => {
               )}
 
               {/* Upload Button Overlay */}
-              <label className="absolute bottom-0 right-0 bg-button-dark-bg text-button-dark-text rounded-full p-2 cursor-pointer hover:bg-button-dark-hover">
+              <label
+                className="absolute bottom-0 right-0 bg-button-dark-bg rounded-full p-2 cursor-pointer text-button-dark-text
+                    border border-button-border
+                    hover:bg-card-muted 
+                    hover:text-text"
+              >
                 <input
                   type="file"
                   accept="image/*"
@@ -106,55 +125,63 @@ const UserProfile = () => {
             {/* Modal */}
             {isModalOpen && (
               <div
-                className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+                className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 sm:p-6"
                 onClick={() => setIsModalOpen(false)}
               >
                 <div
-                  className="bg-card p-4 rounded-lg relative max-w-[90%] max-h-[90%]"
+                  className="bg-card rounded-2xl p-4 sm:p-6 w-full max-w-sm sm:max-w-md md:max-w-lg relative flex flex-col items-center"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  {user.profileImage?.url || selectedImage ? (
+                  {/* Profile Image */}
+                  {user.profileImage?.url ? (
                     <img
-                      src={selectedImage || user.profileImage.url}
+                      src={user.profileImage.url}
                       alt={user.fullName}
-                      className="max-w-full max-h-[70vh] rounded-lg object-cover mb-4"
+                      className="w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 rounded-full object-cover mb-4"
                     />
                   ) : (
-                    <div className="w-32 h-32 flex items-center justify-center bg-card-muted rounded-full border-4 border-border mb-4">
+                    <div className="w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 flex items-center justify-center bg-card-muted rounded-full border-4 border-border mb-4">
                       <User className="w-12 h-12 text-text-secondary" />
                     </div>
                   )}
 
-                  {/* Upload new inside modal */}
-                  <div className="flex gap-2">
-                    <label className="flex items-center gap-1 bg-button-dark-bg text-button-dark-text px-3 py-1 rounded cursor-pointer hover:bg-button-dark-hover">
+                  {/* Buttons */}
+                  <div className="flex flex-col sm:flex-row gap-3 mt-2 w-full justify-center">
+                    {/* Upload */}
+                    <label
+                      className="w-full sm:w-50 flex items-center justify-center gap-1 px-4 py-3 rounded-xl cursor-pointer transition bg-button-dark-hover 
+                    text-button-dark-text
+                    border border-button-border
+                    hover:bg-card-muted 
+                    hover:text-text"
+                    >
                       <input
                         type="file"
                         accept="image/*"
                         className="hidden"
                         onChange={handleFileChange}
                       />
-                      <Camera className="w-4 h-4" /> Upload
+                      <Camera className="w-5 h-5" /> Upload
                     </label>
 
+                    {/* Remove */}
                     {user.profileImage?.url && (
-                      <button
+                      <Button
                         onClick={handleRemovePhoto}
-                        className="flex items-center gap-1 bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
+                        className="flex items-center justify-center gap-1 bg-red-600 text-white px-4 py-2 rounded-xl hover:bg-red-700 transition"
                       >
-                        <Trash2 className="w-4 h-4" /> Remove
-                      </button>
+                        <Trash2 className="w-5 h-5" /> Remove
+                      </Button>
                     )}
-                    <button onClick={() => setIsModalOpen(false)} className="flex items-center gap-1 bg-button-dark-bg text-button-dark-text px-3 py-1 rounded hover:bg-button-dark-hover">
-                      Cancel
-                    </button>
-                  </div>
 
-                  {uploading && (
-                    <p className="text-sm text-text-secondary mt-2">
-                      Uploading...
-                    </p>
-                  )}
+                    {/* Cancel */}
+                    <Button
+                      onClick={() => setIsModalOpen(false)}
+                      className="flex items-center justify-center gap-1 bg-button-dark-bg text-button-dark-text  rounded-xl hover:bg-button-dark-hover transition "
+                    >
+                      Cancel
+                    </Button>
+                  </div>
                 </div>
               </div>
             )}
