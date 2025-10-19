@@ -30,7 +30,7 @@ const Input = ({
         onChange={onChange}
         className={`
           w-full 
-          pl-10 pr-2 py-2 text-sm sm:pl-12 sm:py-3 sm:text-base
+          pl-10 pr-2 py-3 text-sm sm:pl-12 sm:py-3 sm:text-base
           rounded-full
           bg-card-soft 
           text-text 
