@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Camera, User } from "lucide-react";
 import api from "@/utils/Api/axiosInstance";
 import { useToast } from "@/utils/context/ToastContext";
@@ -12,6 +12,7 @@ const ProfileImageUpload = ({
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [isDark, setIsDark] = useState(false);
   const { showToast } = useToast();
 
   const sizeClasses = {
@@ -20,6 +21,23 @@ const ProfileImageUpload = ({
     large: "w-32 h-32",
     xlarge: "w-40 h-40",
   };
+
+  // Detect theme
+  useEffect(() => {
+    const checkDarkMode = () => {
+      setIsDark(document.documentElement.classList.contains("dark"));
+    };
+    checkDarkMode();
+
+    // Watch for theme changes
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   const handleUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -79,7 +97,12 @@ const ProfileImageUpload = ({
     <>
       <div className="relative group">
         <button
-          onClick={() => setIsModalOpen(true)}
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setIsModalOpen(true);
+          }}
           className={`${sizeClasses[size]} rounded-full overflow-hidden border-primary/20 hover:border-primary/40 transition-all duration-200 relative cursor-pointer`}
         >
           {profileImage?.url ? (
@@ -90,11 +113,21 @@ const ProfileImageUpload = ({
             />
           ) : (
             <div className="w-full h-full relative flex items-center justify-center overflow-hidden rounded-full">
-              {/* Base background — clean white in light mode, deep gray in dark */}
-              <div className="absolute inset-0 bg-neutral-50 dark:bg-neutral-900 backdrop-blur-sm z-0" />
+              {/* Base background — conditional based on theme */}
+              <div 
+                className={`absolute inset-0 backdrop-blur-sm z-0 ${
+                  isDark ? 'bg-gray-800' : 'bg-gradient-to-br bg-gray-100'
+                }`}
+              />
 
               {/* Subtle gradient accent */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/5 dark:from-primary/30 dark:to-primary/10 z-0" />
+              <div 
+                className={`absolute inset-0 bg-gradient-to-br z-0 ${
+                  isDark 
+                    ? 'from-primary/20 to-primary/5' 
+                    : 'from-primary/20 to-primary/5'
+                }`}
+              />
 
               {/* Icon */}
               <User className="relative w-1/2 h-1/2 text-primary z-10 opacity-90" />

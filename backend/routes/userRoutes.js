@@ -12,7 +12,7 @@ const {
   forgotPassword,
   resetPassword,
 } = require("../controllers/resetPasswordController");
-const { getUserProfile } = require("../controllers/userProfileController");
+const { getUserProfile, updateUserProfile } = require("../controllers/userProfileController");
 const { uploadProfileImage, deleteProfileImage } = require("../controllers/userImageController");
 const upload = require("../middleware/upload");
 router.post("/api/register", validatorRegister, register);
@@ -23,6 +23,7 @@ router.post("/api/forgot-password", forgotPassword);
 router.post("/api/reset-password/:token", resetPassword);
 
 router.get("/api/user/profile", authUser, getUserProfile);
+router.patch("/api/user/profile", authUser, updateUserProfile);
 router.patch(
   "/api/user/profile-image",
   authUser,

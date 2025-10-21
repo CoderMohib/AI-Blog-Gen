@@ -77,7 +77,7 @@ const DashboardLayout = () => {
               isOpen ? "gap-3 px-3" : "flex-col"
             } rounded-md cursor-pointer `}
             onClick={() => {
-              navigate(`/profile/${user.id}`);
+              navigate(`/profile`);
             }}
           >
             <ProfileAvatar user={user} />
@@ -160,7 +160,7 @@ const DashboardLayout = () => {
             <div
               className={`flex items-center gap-3 p-1 rounded-md cursor-pointer `}
               onClick={() => {
-                navigate(`/profile/${user.id}`);
+                navigate(`/profile`);
               }}
             >
               <ProfileAvatar user={user} />

@@ -54,7 +54,7 @@ function App() {
               }
             >
               <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/profile/:userId" element={<ProfileView />} />
+              <Route path="/profile" element={<ProfileView />} />
               <Route path="/profile/edit" element={<EditProfile />} />
             </Route>
 
