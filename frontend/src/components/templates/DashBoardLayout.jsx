@@ -3,7 +3,7 @@ import { NavLink, Outlet } from "react-router-dom";
 import { Home, User, Settings, Menu, LogOut, X } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import logo from "@/assets/mainlogo.png";
-import ThemeToggle from "@/components/ThemeToggle";
+import ThemeToggle from "@/components/molecules/ThemeToggle";
 import ProfileAvatar from "@/components/atoms/ProfileAvatar";
 import { useNavigate } from "react-router-dom";
 const DashboardLayout = () => {

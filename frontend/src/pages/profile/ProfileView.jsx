@@ -13,7 +13,7 @@ import {
 import api from "@/utils/Api/axiosInstance";
 import { useToast } from "@/utils/context/ToastContext";
 import DotRingSpinner from "@/components/atoms/Loader";
-import ProfileImageUpload from "@/components/profile/ProfileImageUpload";
+import ProfileImageUpload from "@/components/organisms/ProfileImageUpload";
 
 const ProfileView = () => {
   const [user, setUser] = useState(null);

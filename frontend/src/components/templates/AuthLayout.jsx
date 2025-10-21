@@ -1,6 +1,6 @@
 import ReservedRights from "@/components/atoms/ReservedRights";
-import SideSection from "@/components/SideSection";
-import ThemeToggle from "@/components/ThemeToggle";
+import SideSection from "@/components/organisms/SideSection";
+import ThemeToggle from "@/components/molecules/ThemeToggle";
 import React from "react";
 import logo from "@/assets/mainlogo.png";
 export default function AuthLayout({ children }) {

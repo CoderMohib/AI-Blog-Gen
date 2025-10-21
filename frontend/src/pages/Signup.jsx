@@ -1,5 +1,5 @@
-import SignUpForm from "@/components/forms/SignUpForm";
-import AuthLayout from "@/layout/AuthLayout";
+import SignUpForm from "@/components/organisms/SignUpForm";
+import AuthLayout from "@/components/templates/AuthLayout";
 const SignUp = () => {
   return (
     <AuthLayout>

@@ -1,6 +1,6 @@
-import ResetPasswordEmail from "@/components/forms/ResetPasswordEmailForm";
-import ResetPassword from "@/components/forms/ResetPasswordForm";
-import AuthLayout from "@/layout/AuthLayout";
+import ResetPasswordEmail from "@/components/organisms/ResetPasswordEmailForm";
+import ResetPassword from "@/components/organisms/ResetPasswordForm";
+import AuthLayout from "@/components/templates/AuthLayout";
 import { useParams } from "react-router-dom";
 const ForgetPassword = () => {
   const { token } = useParams();

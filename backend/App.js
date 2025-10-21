@@ -6,8 +6,9 @@ const cookieParser = require("cookie-parser");
 const App = express();
 require('dotenv').config()
 const path = require("path");
+console.log("FRONTEND_URL:", process.env.FRONTEND_URL);
 App.use(cors({
-  origin: "http://localhost:5173", 
+  origin: process.env.FRONTEND_URL, 
   credentials: true,               
 }));
 App.use(express.json());

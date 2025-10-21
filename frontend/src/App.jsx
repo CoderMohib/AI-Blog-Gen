@@ -11,8 +11,8 @@ import ActivationPage from "./pages/ActivationPage";
 import ForgetPassword from "./pages/ForgotPassword";
 import Error404 from "./pages/Error404";
 import { Navigate } from "react-router-dom";
-import PublicRoute from "./components/routes/PublicRoute";
-import DashboardLayout from "./layout/DashBoardLayout";
+import PublicRoute from "./components/molecules/PublicRoute";
+import DashboardLayout from "./components/templates/DashBoardLayout";
 import EditProfile from "./pages/profile/EditProfile";
 import ProfileView from "./pages/profile/ProfileView";
 function App() {

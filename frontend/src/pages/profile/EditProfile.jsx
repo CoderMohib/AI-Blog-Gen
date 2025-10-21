@@ -12,7 +12,7 @@ import { useToast } from "@/utils/context/ToastContext";
 import DotRingSpinner from "@/components/atoms/Loader";
 import Button from "@/components/atoms/FormSubmitBtn";
 import { Calendar, User, Phone, Globe, FileText } from "lucide-react";
-import ProfileImageUpload from "@/components/profile/ProfileImageUpload";
+import ProfileImageUpload from "@/components/organisms/ProfileImageUpload";
 
 /* ------------------ Validation ------------------ */
 const validationSchema = Yup.object({
