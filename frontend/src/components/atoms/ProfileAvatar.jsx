@@ -3,7 +3,7 @@ import { User } from "lucide-react";
 function ProfileAvatar({ user }) {
   return (
     <div className="w-10 h-10 rounded-full bg-card-soft flex items-center justify-center overflow-hidden shadow-lg">
-      {user?.profileImage.url ? (
+      {user?.profileImage?.url ? (
         <img
           src={user.profileImage.url}
           alt="Profile"

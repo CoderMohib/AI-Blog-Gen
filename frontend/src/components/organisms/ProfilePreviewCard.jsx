@@ -1,7 +1,7 @@
-import { Globe, Phone } from "lucide-react";
+import { Globe, Phone, Lock } from "lucide-react";
 import ProfileImageUpload from "./ProfileImageUpload";
 
-const ProfilePreviewCard = ({ user, values }) => {
+const ProfilePreviewCard = ({ user, values, onImageUpdate }) => {
   return (
     <div className="bg-card border border-border rounded-2xl p-6 shadow-xl">
       <h3 className="text-xs font-semibold text-text-secondary uppercase tracking-wider mb-6">
@@ -13,6 +13,7 @@ const ProfilePreviewCard = ({ user, values }) => {
         <div className="mb-4">
           <ProfileImageUpload
             profileImage={user?.profileImage}
+            onImageUpdate={onImageUpdate}
             size="large"
           />
         </div>
@@ -20,9 +21,17 @@ const ProfilePreviewCard = ({ user, values }) => {
         <h3 className="text-xl font-bold mb-1 break-words max-w-full px-2">
           {values.fullName || user?.fullName || "Full Name"}
         </h3>
-        <p className="text-text-secondary text-sm mb-4 break-words max-w-full px-2">
-          @{values.username || user?.username || "username"}
-        </p>
+        <div className="flex items-center gap-2 mb-4">
+          <p className="text-text-secondary text-sm break-words max-w-full px-2">
+            @{values.username || user?.username || "username"}
+          </p>
+          {user?.isPrivate && (
+            <div className="flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium animate-pulse">
+              <Lock className="w-3 h-3" />
+              <span>Private</span>
+            </div>
+          )}
+        </div>
 
         {values.bio && (
           <div className="w-full px-2 mb-4">
@@ -57,3 +66,5 @@ const ProfilePreviewCard = ({ user, values }) => {
 };
 
 export default ProfilePreviewCard;
+
+

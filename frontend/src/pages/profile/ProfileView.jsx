@@ -9,16 +9,25 @@ import {
   Users,
   Image as ImageIcon,
   Edit,
+  Lock,
 } from "lucide-react";
+import FollowButton from "@/components/organisms/FollowButton";
+import FollowersList from "@/components/organisms/FollowersList";
+import FollowingList from "@/components/organisms/FollowingList";
 import api from "@/utils/Api/axiosInstance";
 import { useToast } from "@/utils/context/ToastContext";
+import { useAuth } from "@/hooks/useAuth";
 import DotRingSpinner from "@/components/atoms/Loader";
 import ProfileImageUpload from "@/components/organisms/ProfileImageUpload";
 
 const ProfileView = () => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('posts');
+  const [followersCount, setFollowersCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
   const { showToast } = useToast();
+  const { updateUser } = useAuth();
   const navigate = useNavigate();
 
   const fetchProfile = async () => {
@@ -26,6 +35,21 @@ const ProfileView = () => {
       setIsLoading(true);
       const res = await api.get("/api/user/profile");
       setUser(res.data.user);
+      
+      // Fetch followers and following counts
+      if (res.data.user?._id) {
+        try {
+          const [followersRes, followingRes] = await Promise.all([
+            api.get(`/api/follow/followers/${res.data.user._id}?page=1&limit=1`),
+            api.get(`/api/follow/following/${res.data.user._id}?page=1&limit=1`)
+          ]);
+          
+          setFollowersCount(followersRes.data.pagination?.totalCount || 0);
+          setFollowingCount(followingRes.data.pagination?.totalCount || 0);
+        } catch (error) {
+          console.error("Error fetching counts:", error);
+        }
+      }
     } catch (err) {
       console.error(err);
       showToast("Failed to load profile", "error");
@@ -39,7 +63,10 @@ const ProfileView = () => {
   }, []);
 
   const handleImageUpdate = (newImage) => {
-    setUser((prev) => ({ ...prev, profileImage: newImage }));
+    const updatedUser = { ...user, profileImage: newImage };
+    setUser(updatedUser);
+    // Update global user state so dashboard sidebar reflects the change
+    updateUser(updatedUser);
   };
 
   const formatDate = (dateString) => {
@@ -56,9 +83,6 @@ const ProfileView = () => {
   return (
     <div className="min-h-screen bg-background text-text p-4 sm:p-6 lg:p-8">
       <div className="max-w-6xl mx-auto">
-        {/* Header with Edit Button */}
-        {/*  */}
-
         {/* Profile Header Card */}
         <div className="bg-card border border-border rounded-2xl shadow-xl overflow-hidden mb-6">
           {/* Cover/Banner */}
@@ -99,42 +123,36 @@ const ProfileView = () => {
                     <h1 className="text-2xl sm:text-3xl font-bold text-text">
                       {user?.fullName || user?.username}
                     </h1>
-                    <p className="text-text-secondary text-lg">
-                      @{user?.username}
-                    </p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-text-secondary text-lg">
+                        @{user?.username}
+                      </p>
+                      {user?.isPrivate && (
+                        <div className="flex items-center gap-1  text-primary rounded-full text-sm font-medium animate-pulse">
+                          <Lock className="w-4 h-4" />
+                          <span>Private</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
-                  {/* Stats */}
-                  <div className="flex gap-6">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-primary">
-                        {user?.posts || 0}
-                      </div>
-                      <div className="text-sm text-text-secondary">Posts</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-primary">
-                        {user?.followers || 0}
-                      </div>
-                      <div className="text-sm text-text-secondary">
-                        Followers
-                      </div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-primary">
-                        {user?.following || 0}
-                      </div>
-                      <div className="text-sm text-text-secondary">
-                        Following
-                      </div>
-                    </div>
-                  </div>
                 </div>
 
                 {/* Bio */}
                 {user?.bio && (
                   <p className="mt-4 text-text leading-relaxed">{user.bio}</p>
                 )}
+
+                {/* Follow Button */}
+                <div className="mt-6">
+                  <FollowButton 
+                    userId={user?._id} 
+                    user={user}
+                    onFollowChange={(status) => {
+                      console.log('Follow status changed:', status);
+                    }}
+                  />
+                </div>
 
                 {/* Contact Info Grid */}
                 <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -197,46 +215,70 @@ const ProfileView = () => {
           </div>
         </div>
 
-        {/* Activity Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Recent Posts */}
-          <div className="lg:col-span-2 bg-card border border-border rounded-2xl p-6 shadow-xl">
-            <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
-              <ImageIcon className="w-5 h-5 text-primary" />
-              Recent Posts
-            </h2>
-            <div className="text-center py-12 text-text-secondary">
-              <ImageIcon className="w-16 h-16 mx-auto mb-4 text-text-secondary/50" />
-              <p>No posts yet</p>
-            </div>
+        {/* Tabs Section */}
+        <div className="bg-card border border-border rounded-2xl shadow-xl overflow-hidden">
+          {/* Tabs Header */}
+          <div className="flex border-b border-border">
+            <button
+              onClick={() => setActiveTab('posts')}
+              className={`flex items-center gap-2 px-6 py-4 font-medium text-sm border-b-2 transition-colors ${
+                activeTab === 'posts' 
+                  ? 'border-primary text-primary' 
+                  : 'border-transparent text-text-secondary hover:text-text'
+              }`}
+            >
+              <ImageIcon className="w-4 h-4" />
+              <span>Posts</span>
+              <span className="bg-card-muted text-text-secondary px-2 py-1 rounded-full text-xs">
+                {user?.posts || 0}
+              </span>
+            </button>
+            <button
+              onClick={() => setActiveTab('followers')}
+              className={`flex items-center gap-2 px-6 py-4 font-medium text-sm border-b-2 transition-colors ${
+                activeTab === 'followers' 
+                  ? 'border-primary text-primary' 
+                  : 'border-transparent text-text-secondary hover:text-text'
+              }`}
+            >
+              <Users className="w-4 h-4" />
+              <span>Followers</span>
+              <span className="bg-card-muted text-text-secondary px-2 py-1 rounded-full text-xs">
+                {followersCount}
+              </span>
+            </button>
+            <button
+              onClick={() => setActiveTab('following')}
+              className={`flex items-center gap-2 px-6 py-4 font-medium text-sm border-b-2 transition-colors ${
+                activeTab === 'following' 
+                  ? 'border-primary text-primary' 
+                  : 'border-transparent text-text-secondary hover:text-text'
+              }`}
+            >
+              <Users className="w-4 h-4" />
+              <span>Following</span>
+              <span className="bg-card-muted text-text-secondary px-2 py-1 rounded-full text-xs">
+                {followingCount}
+              </span>
+            </button>
           </div>
 
-          {/* Activity Card */}
-          <div className="bg-card border border-border rounded-2xl p-6 shadow-xl">
-            <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
-              <Users className="w-5 h-5 text-primary" />
-              Activity
-            </h2>
-            <div className="space-y-4">
-              <div className="p-4 bg-card-soft rounded-xl">
-                <div className="text-2xl font-bold text-primary">
-                  {user?.posts || 0}
-                </div>
-                <div className="text-sm text-text-secondary">Total Posts</div>
+          {/* Tab Content */}
+          <div className="p-6">
+            {activeTab === 'posts' && (
+              <div className="text-center py-12">
+                <ImageIcon className="w-16 h-16 mx-auto mb-4 text-text-secondary/50" />
+                <p className="text-text-secondary">No posts yet</p>
               </div>
-              <div className="p-4 bg-card-soft rounded-xl">
-                <div className="text-2xl font-bold text-primary">
-                  {user?.followers || 0}
-                </div>
-                <div className="text-sm text-text-secondary">Followers</div>
-              </div>
-              <div className="p-4 bg-card-soft rounded-xl">
-                <div className="text-2xl font-bold text-primary">
-                  {user?.following || 0}
-                </div>
-                <div className="text-sm text-text-secondary">Following</div>
-              </div>
-            </div>
+            )}
+
+            {activeTab === 'followers' && (
+              <FollowersList userId={user?._id} />
+            )}
+
+            {activeTab === 'following' && (
+              <FollowingList userId={user?._id} />
+            )}
           </div>
         </div>
       </div>

@@ -28,3 +28,5 @@ const ProfileTipsCard = () => {
 };
 
 export default ProfileTipsCard;
+
+

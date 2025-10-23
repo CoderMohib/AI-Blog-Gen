@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
-import { Home, User, Settings, Menu, LogOut, X } from "lucide-react";
+import { Home, User, Settings, Menu, LogOut, X, Lock } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import logo from "@/assets/mainlogo.png";
 import ThemeToggle from "@/components/molecules/ThemeToggle";
 import ProfileAvatar from "@/components/atoms/ProfileAvatar";
+import NotificationBell from "@/components/atoms/NotificationBell";
 import { useNavigate } from "react-router-dom";
 const DashboardLayout = () => {
   const navigate = useNavigate();
@@ -88,7 +89,7 @@ const DashboardLayout = () => {
                   {user?.fullName || "Guest User"}
                 </span>
                 <span className="text-xs text-muted-foreground">
-                  @{user.username}
+                  @{user?.username || "unknown"}
                 </span>
               </div>
             )}
@@ -166,11 +167,16 @@ const DashboardLayout = () => {
               <ProfileAvatar user={user} />
 
               <div className="flex flex-col">
-                <span className="text-sm font-medium">
-                  {user?.fullName || "Guest User"}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium">
+                    {user?.fullName || "Guest User"}
+                  </span>
+                  {user?.isPrivate && (
+                    <Lock className="w-3 h-3 text-primary animate-pulse" />
+                  )}
+                </div>
                 <span className="text-xs text-muted-foreground">
-                  @{user.username}
+                  @{user?.username || "unknown"}
                 </span>
               </div>
             </div>
@@ -200,13 +206,16 @@ const DashboardLayout = () => {
           <div className="flex-1" />
 
           {/* Right side */}
-          <ThemeToggle />
-          <button
-            onClick={() => setIsMobileOpen(!isMobileOpen)}
-            className="lg:hidden cursor-pointer p-2 rounded hover:bg-card-muted ml-2"
-          >
-            <Menu />
-          </button>
+          <div className="flex items-center gap-1">
+            <NotificationBell />
+            <ThemeToggle />
+            <button
+              onClick={() => setIsMobileOpen(!isMobileOpen)}
+              className="lg:hidden cursor-pointer p-2 rounded hover:bg-card-muted ml-2"
+            >
+              <Menu />
+            </button>
+          </div>
         </div>
 
         {/* Main content */}

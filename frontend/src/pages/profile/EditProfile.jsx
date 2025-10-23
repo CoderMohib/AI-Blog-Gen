@@ -6,6 +6,7 @@ import * as Yup from "yup";
 import { getNames } from "country-list";
 import api from "@/utils/Api/axiosInstance";
 import { useToast } from "@/utils/context/ToastContext";
+import { useAuth } from "@/hooks/useAuth";
 import DotRingSpinner from "@/components/atoms/Loader";
 import EditProfileHeader from "@/components/organisms/EditProfileHeader";
 import ProfilePreviewCard from "@/components/organisms/ProfilePreviewCard";
@@ -14,6 +15,7 @@ import PersonalInfoForm from "@/components/organisms/PersonalInfoForm";
 import ContactInfoForm from "@/components/organisms/ContactInfoForm";
 import BioForm from "@/components/organisms/BioForm";
 import MobileActions from "@/components/organisms/MobileActions";
+import PrivacySettings from "@/components/organisms/PrivacySettings";
 
 /* ------------------ Validation ------------------ */
 const validationSchema = Yup.object({
@@ -39,6 +41,7 @@ const EditProfile = () => {
   const [countries, setCountries] = useState([]);
   const [isDark, setIsDark] = useState(false);
   const { showToast } = useToast();
+  const { updateUser } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -80,7 +83,10 @@ const EditProfile = () => {
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const response = await api.patch("/api/user/profile", values);
-      setUser(response.data.user);
+      const updatedUser = response.data.user;
+      setUser(updatedUser);
+      // Update global user state so dashboard sidebar reflects the change
+      updateUser(updatedUser);
       showToast("Profile updated successfully", "success", () => {
         navigate("/profile");
       });
@@ -120,7 +126,16 @@ const EditProfile = () => {
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Left Column - Profile Preview */}
                 <div className="lg:col-span-1 space-y-6">
-                  <ProfilePreviewCard user={user} values={values} />
+                  <ProfilePreviewCard 
+                    user={user} 
+                    values={values} 
+                    onImageUpdate={(newImage) => {
+                      const updatedUser = { ...user, profileImage: newImage };
+                      setUser(updatedUser);
+                      // Update global user state so dashboard sidebar reflects the change
+                      updateUser(updatedUser);
+                    }}
+                  />
                   <ProfileTipsCard />
                 </div>
 
@@ -134,6 +149,7 @@ const EditProfile = () => {
                   />
                   <ContactInfoForm />
                   <BioForm values={values} />
+                  <PrivacySettings />
                   <MobileActions isSubmitting={isSubmitting} />
                 </div>
               </div>
