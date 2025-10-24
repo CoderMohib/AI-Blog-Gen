@@ -27,7 +27,7 @@ const ProfileView = () => {
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
   const { showToast } = useToast();
-  const { updateUser, user: currentUser } = useAuth();
+  const { updateUser, user: currentUser, isAuthLoading } = useAuth();
   const navigate = useNavigate();
 
   const fetchProfile = async () => {
@@ -143,18 +143,8 @@ const ProfileView = () => {
                   <p className="mt-4 text-text leading-relaxed">{user.bio}</p>
                 )}
 
-                {/* Follow Button - Only show for other users, not your own profile */}
-                {currentUser?._id !== user?._id && (
-                  <div className="mt-6">
-                    <FollowButton 
-                      userId={user?._id} 
-                      user={user}
-                      onFollowChange={(status) => {
-                        console.log('Follow status changed:', status);
-                      }}
-                    />
-                  </div>
-                )}
+                {/* Follow Button - Hidden on own profile page since /api/user/profile returns current user's profile */}
+                {/* This page is specifically for viewing your own profile, so no follow button needed */}
 
                 {/* Contact Info Grid */}
                 <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-4">
