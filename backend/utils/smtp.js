@@ -1,16 +1,19 @@
-const nodemailer = require("nodemailer");
+// const nodemailer = require("nodemailer");
 const fs = require("fs").promises; 
 const path = require("path");
 require('dotenv').config()
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT),
-  secure: false,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
+const SibApiV3Sdk = require("@sendinblue/client");
+const client = new SibApiV3Sdk.TransactionalEmailsApi();
+client.setApiKey(SibApiV3Sdk.TransactionalEmailsApiApiKeys.apiKey, process.env.BREVO_API_KEY);
+// const transporter = nodemailer.createTransport({
+//   host: process.env.SMTP_HOST,
+//   port: Number(process.env.SMTP_PORT),
+//   secure: false,
+//   auth: {
+//     user: process.env.SMTP_USER,
+//     pass: process.env.SMTP_PASS,
+//   },
+// });
 
 // 3. Reusable function to send emails
 async function sendEmail(to, subject, htmlFilePath, replacements = {}) {
@@ -23,14 +26,15 @@ async function sendEmail(to, subject, htmlFilePath, replacements = {}) {
       htmlContent = htmlContent.replace(regex, replacements[key]);
     });
     
-    const info = await transporter.sendMail({
-      from: `"AI Blog Generator" <${process.env.FROM_EMAIL}>`, // sender address
-      to,
-      subject,
-      html: htmlContent,
-    });
+    const sendSmtpEmail = {
+      sender: { email: process.env.FROM_EMAIL, name: "AI Blog Generator" },
+      to: [{ email: to }],
+      subject: subject,
+      htmlContent: htmlContent,
+    };
 
-    console.log("✅ Email sent successfully: " + info.messageId);
+    const response = await client.sendTransacEmail(sendSmtpEmail);
+    console.log("✅ Email sent successfully:", response.messageId || response);
     return {success: true};
   } catch (err) {
     console.error("❌ Error sending email:", err);
