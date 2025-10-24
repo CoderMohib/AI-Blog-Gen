@@ -30,7 +30,7 @@ async function sendEmail(to, subject, htmlFilePath, replacements = {}) {
 
     const fullPath = path.resolve(__dirname, `../templates/${htmlFilePath}`);
     let htmlContent = await fs.readFile(fullPath, "utf-8");
-    replacements.logoUrl = `http://localhost:3000/public/images/logo.png`;
+    replacements.logoUrl = `${process.env.BACKEND_URL}/public/images/logo.png`;
     Object.keys(replacements).forEach((key) => {
       const regex = new RegExp(`{{${key}}}`, "g");
       htmlContent = htmlContent.replace(regex, replacements[key]);
