@@ -12,7 +12,7 @@ const http = require('http');
 
 console.log("FRONTEND_URL:", process.env.FRONTEND_URL);
 App.use(cors({
-  origin: ["http://localhost:5173", "http://127.0.0.1:5173"], 
+  origin: ["http://localhost:5173", "http://127.0.0.1:5173","https://ai-blog-gen-zeta.vercel.app"], 
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   allowedHeaders: ["Content-Type", "Authorization", "x-auth-token"]
