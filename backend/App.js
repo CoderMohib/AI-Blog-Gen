@@ -3,9 +3,11 @@ const cors = require("cors");
 const connectDB = require("./db/connect");
 const userRoutes = require("./routes/userRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
+const compression = require('compression');
 const cookieParser = require("cookie-parser");
 const { initializeSocket } = require("./socket");
 const App = express();
+App.set("trust proxy", 1);
 require('dotenv').config()
 const path = require("path");
 const http = require('http');
@@ -22,7 +24,7 @@ App.use(cookieParser());
 App.use("/", userRoutes);
 App.use("/", notificationRoutes);
 App.use("/public", express.static(path.join(__dirname, "public")));
-
+App.use(compression());
 connectDB()
   .then(() => {
     const server = http.createServer(App);
