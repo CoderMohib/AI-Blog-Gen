@@ -206,12 +206,12 @@ const DashboardLayout = () => {
           <div className="flex-1" />
 
           {/* Right side */}
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-0.5">
             <NotificationBell />
             <ThemeToggle />
             <button
               onClick={() => setIsMobileOpen(!isMobileOpen)}
-              className="lg:hidden cursor-pointer p-2 rounded hover:bg-card-muted ml-2"
+              className="lg:hidden cursor-pointer p-2 rounded hover:bg-card-muted "
             >
               <Menu />
             </button>
@@ -219,7 +219,7 @@ const DashboardLayout = () => {
         </div>
 
         {/* Main content */}
-        <main className="flex-1 p-6 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto">
           <Outlet />
         </main>
       </div>

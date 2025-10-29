@@ -176,10 +176,10 @@ const ProfileViewTabs = () => {
     <div className="min-h-screen bg-background text-text">
       {/* Profile Header */}
       <div className="bg-card border-b border-border">
-        <div className="max-w-4xl mx-auto p-6">
-          <div className="flex flex-col md:flex-row gap-6">
+        <div className="max-w-4xl mx-auto p-4 sm:p-6">
+          <div className="flex flex-col md:flex-row gap-4 sm:gap-6">
             {/* Profile Image */}
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 flex items-center justify-center md:items-start scale-95 sm:scale-100">
               <ProfileImageUpload
                 profileImage={user?.profileImage}
                 onImageUpdate={handleImageUpdate}
@@ -188,35 +188,35 @@ const ProfileViewTabs = () => {
             </div>
 
             {/* Profile Info */}
-            <div className="flex-1">
-              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-                <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <h1 className="text-2xl font-bold text-text">
+            <div className="flex-1 mt-2 sm:mt-0 min-w-0">
+              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3 sm:gap-4">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 mb-1 sm:mb-2 flex-wrap">
+                    <h1 className="text-xl sm:text-2xl font-bold text-text truncate">
                       {user?.fullName || user?.username}
                     </h1>
                     {user?.isPrivate && (
-                      <div className="flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium animate-pulse">
-                        <Lock className="w-4 h-4" />
+                      <div className="flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary rounded-full text-xs sm:text-sm font-medium animate-pulse">
+                        <Lock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         <span>Private</span>
                       </div>
                     )}
                   </div>
-                  <p className="text-text-secondary text-lg mb-4">
+                  <p className="text-text-secondary text-base sm:text-lg mb-3 sm:mb-4 break-all">
                     @{user?.username}
                   </p>
                   
                   {/* Bio */}
                   {user?.bio && (
-                    <p className="text-text leading-relaxed mb-4">{user.bio}</p>
+                    <p className="text-text leading-relaxed mb-4 break-words">{user.bio}</p>
                   )}
 
                   {/* Contact Info */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4">
                     {user?.email && (
                       <div className="flex items-center gap-2 text-text-secondary">
                         <Mail className="w-4 h-4" />
-                        <span className="text-sm">{user.email}</span>
+                        <span className="text-sm break-all">{user.email}</span>
                       </div>
                     )}
                     {user?.phone && (
@@ -241,7 +241,7 @@ const ProfileViewTabs = () => {
                 </div>
 
                 {/* Follow Button */}
-                <div className="flex-shrink-0">
+                <div className="flex-shrink-0 mt-2 sm:mt-0">
                   <FollowButton 
                     userId={user?._id} 
                     user={user}
@@ -258,14 +258,14 @@ const ProfileViewTabs = () => {
 
       {/* Tabs */}
       <div className="max-w-4xl mx-auto">
-        <div className="flex border-b border-border">
+        <div className="flex border-b border-border overflow-x-auto no-scrollbar">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`
-                flex items-center gap-2 px-6 py-4 font-medium text-sm
-                border-b-2 transition-colors
+                flex items-center gap-2 px-4 sm:px-6 py-3 sm:py-4 font-medium text-xs sm:text-sm
+                border-b-2 transition-colors whitespace-nowrap
                 ${activeTab === tab.id 
                   ? 'border-primary text-primary' 
                   : 'border-transparent text-text-secondary hover:text-text'
@@ -282,10 +282,10 @@ const ProfileViewTabs = () => {
         </div>
 
         {/* Tab Content */}
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           {activeTab === 'posts' && (
-            <div className="text-center py-12">
-              <ImageIcon className="w-16 h-16 mx-auto mb-4 text-text-secondary/50" />
+            <div className="text-center py-10 sm:py-12">
+              <ImageIcon className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 text-text-secondary/50" />
               <p className="text-text-secondary">No posts yet</p>
             </div>
           )}
@@ -293,7 +293,7 @@ const ProfileViewTabs = () => {
           {activeTab === 'followers' && (
             <div>
               {/* Search */}
-              <div className="relative mb-6">
+              <div className="relative mb-4 sm:mb-6">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-text-secondary" />
                 <input
                   type="text"
@@ -307,9 +307,9 @@ const ProfileViewTabs = () => {
               {/* Followers List */}
               <div className="space-y-3">
                 {followers.map((follower) => (
-                  <div key={follower._id} className="flex items-center justify-between p-4 bg-card border border-border rounded-lg hover:bg-card-soft transition-colors">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center overflow-hidden">
+                  <div key={follower._id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 bg-card border border-border rounded-lg hover:bg-card-soft transition-colors">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
                         {follower.profileImage?.url ? (
                           <img
                             src={follower.profileImage.url}
@@ -322,15 +322,17 @@ const ProfileViewTabs = () => {
                           </span>
                         )}
                       </div>
-                      <div>
-                        <h4 className="font-medium text-text">{follower.fullName}</h4>
-                        <p className="text-sm text-text-secondary">@{follower.username}</p>
+                      <div className="min-w-0">
+                        <h4 className="font-medium text-text truncate">{follower.fullName}</h4>
+                        <p className="text-sm text-text-secondary break-all">@{follower.username}</p>
                       </div>
                     </div>
-                    <FollowButton
-                      userId={follower._id}
-                      user={follower}
-                    />
+                    <div className="sm:ml-4">
+                      <FollowButton
+                        userId={follower._id}
+                        user={follower}
+                      />
+                    </div>
                   </div>
                 ))}
               </div>
@@ -360,7 +362,7 @@ const ProfileViewTabs = () => {
           {activeTab === 'following' && (
             <div>
               {/* Search */}
-              <div className="relative mb-6">
+              <div className="relative mb-4 sm:mb-6">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-text-secondary" />
                 <input
                   type="text"
@@ -374,9 +376,9 @@ const ProfileViewTabs = () => {
               {/* Following List */}
               <div className="space-y-3">
                 {following.map((followingUser) => (
-                  <div key={followingUser._id} className="flex items-center justify-between p-4 bg-card border border-border rounded-lg hover:bg-card-soft transition-colors">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center overflow-hidden">
+                  <div key={followingUser._id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 bg-card border border-border rounded-lg hover:bg-card-soft transition-colors">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
                         {followingUser.profileImage?.url ? (
                           <img
                             src={followingUser.profileImage.url}
@@ -389,15 +391,17 @@ const ProfileViewTabs = () => {
                           </span>
                         )}
                       </div>
-                      <div>
-                        <h4 className="font-medium text-text">{followingUser.fullName}</h4>
-                        <p className="text-sm text-text-secondary">@{followingUser.username}</p>
+                      <div className="min-w-0">
+                        <h4 className="font-medium text-text truncate">{followingUser.fullName}</h4>
+                        <p className="text-sm text-text-secondary break-all">@{followingUser.username}</p>
                       </div>
                     </div>
-                    <FollowButton
-                      userId={followingUser._id}
-                      user={followingUser}
-                    />
+                    <div className="sm:ml-4">
+                      <FollowButton
+                        userId={followingUser._id}
+                        user={followingUser}
+                      />
+                    </div>
                   </div>
                 ))}
               </div>
@@ -430,4 +434,6 @@ const ProfileViewTabs = () => {
 };
 
 export default ProfileViewTabs;
+
+
 

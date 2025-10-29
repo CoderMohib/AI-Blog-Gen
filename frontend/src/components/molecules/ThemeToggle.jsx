@@ -9,7 +9,7 @@ export default function ThemeToggle({ className = "" }) {
       onClick={() => setIsDark(!isDark)}
       className={`
         flex items-center gap-1 md:gap-2 
-        px-6 py-1.5 text-[16px] md:text-[18px] rounded-xl
+        px-3.5 py-1.5 text-[16px] md:text-[18px] rounded-xl
          text-text
         cursor-pointer
         ${className}
