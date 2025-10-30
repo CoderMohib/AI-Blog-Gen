@@ -1,4 +1,7 @@
 import React, { createContext, useState, useEffect } from "react";
+import axios from "axios";
+import api from "../Api/axiosInstance";
+const BASE_URL = import.meta.env.VITE_BACKEND_APP_API_URL;
 
 // Create Context
 const AuthContext = createContext();
@@ -43,14 +46,28 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Logout function
-  const logout = () => {
-    setUser(null);
-    setAccessToken(null);
-    setIsLoggedIn(false);
+  const logout = async () => {
+    try {
+      // Call backend logout to clear refresh token cookie
+      await api.post(`/api/logout`, {}, {
+        withCredentials: true,
+      });
+    } catch (error) {
+      console.error("Logout error:", error);
+      // Continue with client-side logout even if backend call fails
+    } finally {
+      // Clear client-side state
+      setUser(null);
+      setAccessToken(null);
+      setIsLoggedIn(false);
 
-    // Clear storage
-    localStorage.removeItem("user");
-    localStorage.removeItem("accessToken");
+      // Clear all storage
+      localStorage.clear();
+      sessionStorage.clear();
+      
+      // Redirect to login
+      window.location.href = "/login";
+    }
   };
 
   return (

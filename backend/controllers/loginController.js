@@ -18,10 +18,12 @@ const login = async (req, res) => {
     // 2. Generate tokens
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
+    
+    // Set refresh token cookie with appropriate settings for production
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true, // ❌ not accessible from JS
       secure: process.env.NODE_ENV === "production", // ✅ only over HTTPS in prod
-      sameSite: "strict", // ✅ CSRF protection
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // ✅ "none" for cross-site in prod
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in ms
     });
     res.status(200).json({

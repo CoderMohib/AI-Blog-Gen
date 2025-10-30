@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const login = require("../controllers/loginController");
+const logout = require("../controllers/logoutController");
 const register = require("../controllers/registerController");
 const verifyRefreshToken = require("../middleware/verifyRefreshToken");
 const refreshToken = require("../controllers/refreshTokenController");
@@ -27,6 +28,7 @@ const {
 const upload = require("../middleware/upload");
 router.post("/api/register", validatorRegister, register);
 router.post("/api/login", validateLogin, login);
+router.post("/api/logout", logout);
 router.post("/api/refresh", verifyRefreshToken, refreshToken);
 router.get("/api/auth/activate/:token", activateAccount);
 router.post("/api/forgot-password", forgotPassword);
