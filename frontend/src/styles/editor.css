@@ -1,0 +1,140 @@
+/* TipTap Editor Prose Styling */
+.prose-editor .ProseMirror {
+  min-height: 400px;
+  padding: 1rem;
+  outline: none;
+}
+
+.prose-editor .ProseMirror:focus {
+  outline: none;
+}
+
+/* Headings */
+.prose-editor h1 {
+  font-size: 2.25em;
+  font-weight: 800;
+  line-height: 1.1111111;
+  margin-top: 0;
+  margin-bottom: 0.8888889em;
+}
+
+.prose-editor h2 {
+  font-size: 1.5em;
+  font-weight: 700;
+  line-height: 1.3333333;
+  margin-top: 2em;
+  margin-bottom: 1em;
+}
+
+.prose-editor h3 {
+  font-size: 1.25em;
+  font-weight: 600;
+  line-height: 1.6;
+  margin-top: 1.6em;
+  margin-bottom: 0.6em;
+}
+
+/* Paragraphs */
+.prose-editor p {
+  margin-top: 1.25em;
+  margin-bottom: 1.25em;
+  line-height: 1.75;
+}
+
+/* Lists */
+.prose-editor ul,
+.prose-editor ol {
+  margin-top: 1.25em;
+  margin-bottom: 1.25em;
+  padding-left: 1.625em;
+}
+
+.prose-editor li {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.prose-editor ul > li {
+  padding-left: 0.375em;
+}
+
+.prose-editor ol > li {
+  padding-left: 0.375em;
+}
+
+/* Links */
+.prose-editor a {
+  color: hsl(var(--primary));
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.prose-editor a:hover {
+  opacity: 0.8;
+}
+
+/* Images */
+.prose-editor img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  margin-top: 2em;
+  margin-bottom: 2em;
+}
+
+/* Code */
+.prose-editor code {
+  color: hsl(var(--primary));
+  font-weight: 600;
+  font-size: 0.875em;
+  background-color: hsl(var(--card-soft));
+  padding: 0.2em 0.4em;
+  border-radius: 0.25rem;
+}
+
+.prose-editor pre {
+  background-color: hsl(var(--card-soft));
+  border-radius: 0.5rem;
+  padding: 1em;
+  overflow-x: auto;
+  margin-top: 1.7142857em;
+  margin-bottom: 1.7142857em;
+}
+
+.prose-editor pre code {
+  background-color: transparent;
+  padding: 0;
+  font-weight: 400;
+  color: inherit;
+  font-size: 0.875em;
+  line-height: 1.7142857;
+}
+
+/* Blockquotes */
+.prose-editor blockquote {
+  font-weight: 500;
+  font-style: italic;
+  border-left: 0.25rem solid hsl(var(--border));
+  quotes: "\201C" "\201D" "\2018" "\2019";
+  margin-top: 1.6em;
+  margin-bottom: 1.6em;
+  padding-left: 1em;
+}
+
+/* Strong and Em */
+.prose-editor strong {
+  font-weight: 600;
+}
+
+.prose-editor em {
+  font-style: italic;
+}
+
+/* Placeholder */
+.prose-editor .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: hsl(var(--text-secondary));
+  pointer-events: none;
+  height: 0;
+}

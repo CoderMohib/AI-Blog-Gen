@@ -1,170 +1,154 @@
-const axios = require('axios');
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-// AI Blog Generation using OpenAI API
+// AI Blog Generation using Google Gemini API
 const generateAIBlog = async (req, res) => {
   try {
-    const { topic, tone = "professional", length = "medium" } = req.body;
+    const {
+      prompt,
+      tone = "professional",
+      length = "medium",
+      keywords = [],
+    } = req.body;
 
-    if (!topic) {
-      return res.status(400).json({ message: "Topic is required" });
+    if (!prompt) {
+      return res.status(400).json({ message: "Prompt is required" });
     }
 
-    // Configure OpenAI API
-    const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-    if (!OPENAI_API_KEY) {
-      return res.status(500).json({ 
-        message: "AI service not configured. Please add OPENAI_API_KEY to environment variables." 
+    // Configure Google Gemini API
+    const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+    if (!GEMINI_API_KEY) {
+      return res.status(500).json({
+        message:
+          "AI service not configured. Please add GEMINI_API_KEY to environment variables.",
       });
     }
+
+    // Initialize Gemini
+    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
     // Determine word count based on length preference
     const wordCounts = {
-      short: "300-500 words",
-      medium: "800-1200 words", 
-      long: "1500-2000 words"
+      short: "300-400 words",
+      medium: "600-800 words",
+      long: "1000-1500 words",
     };
 
-    const prompt = `Write a comprehensive blog post about "${topic}" with the following requirements:
-    
-    - Tone: ${tone}
-    - Length: ${wordCounts[length]}
-    - Include a compelling title
-    - Write an engaging introduction
-    - Create 3-5 main sections with subheadings
-    - Include practical examples and insights
-    - End with a strong conclusion
-    - Use markdown formatting for structure
-    - Include relevant emojis where appropriate
-    - Make it SEO-friendly with natural keyword integration
-    
-    Format the response as JSON with the following structure:
-    {
-      "title": "Blog post title",
-      "excerpt": "Brief 2-3 sentence summary",
-      "content": "Full blog content in markdown format",
-      "tags": ["tag1", "tag2", "tag3"],
-      "suggestedImagePrompt": "Description for AI-generated image"
-    }`;
+    // Build keyword string
+    const keywordString =
+      keywords.length > 0
+        ? `\n- Keywords to include naturally: ${keywords.join(", ")}`
+        : "";
 
-    const response = await axios.post(
-      'https://api.openai.com/v1/chat/completions',
-      {
-        model: 'gpt-3.5-turbo',
-        messages: [
-          {
-            role: 'system',
-            content: 'You are an expert content writer and blogger. Generate high-quality, engaging blog posts that are informative and well-structured.'
-          },
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        max_tokens: 2000,
-        temperature: 0.7,
-      },
-      {
-        headers: {
-          'Authorization': `Bearer ${OPENAI_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    const generationPrompt = `Write a comprehensive blog post with the following requirements:
 
-    const aiResponse = response.data.choices[0].message.content;
-    
-    // Parse the JSON response
-    let blogData;
-    try {
-      blogData = JSON.parse(aiResponse);
-    } catch (parseError) {
-      // If JSON parsing fails, create a structured response from the text
-      blogData = {
-        title: `Complete Guide to ${topic}`,
-        excerpt: `A comprehensive exploration of ${topic}, covering key concepts, practical applications, and expert insights.`,
-        content: aiResponse,
-        tags: [topic.toLowerCase(), "guide", "tutorial"],
-        suggestedImagePrompt: `Professional illustration related to ${topic}`
-      };
-    }
+Topic: ${prompt}
+
+Requirements:
+- Tone: ${tone}
+- Length: ${wordCounts[length]}${keywordString}
+- Include a compelling title as an H1 heading
+- Write an engaging introduction
+- Create 3-5 main sections with H2 subheadings
+- Include practical examples and insights
+- End with a strong conclusion
+- Use HTML formatting (h1, h2, p, ul, ol, strong, em tags)
+- Make it SEO-friendly with natural keyword integration
+- Write in a clear, engaging style
+
+Format the response as valid HTML content that can be directly inserted into a blog editor. Start with an <h1> tag for the title, then use proper HTML structure throughout.`;
+
+    const result = await model.generateContent(generationPrompt);
+    const response = await result.response;
+    const content = response.text();
+
+    // Calculate approximate word count
+    const wordCount = content.split(/\s+/).filter(Boolean).length;
 
     res.json({
-      message: "Blog generated successfully",
-      blog: blogData,
+      success: true,
+      content: content,
+      wordCount: wordCount,
+      generatedAt: new Date().toISOString(),
     });
-
   } catch (error) {
-    console.error('AI Generation Error:', error);
-    
-    if (error.response?.status === 401) {
-      return res.status(401).json({ 
-        message: "Invalid OpenAI API key. Please check your configuration." 
+    console.error("AI Generation Error:", error);
+
+    if (error.message?.includes("API key")) {
+      return res.status(401).json({
+        message: "Invalid Gemini API key. Please check your configuration.",
       });
     }
-    
-    if (error.response?.status === 429) {
-      return res.status(429).json({ 
-        message: "AI service rate limit exceeded. Please try again later." 
+
+    if (
+      error.message?.includes("quota") ||
+      error.message?.includes("rate limit")
+    ) {
+      return res.status(429).json({
+        message: "AI service rate limit exceeded. Please try again later.",
       });
     }
 
     // Fallback: Generate a basic blog structure without AI
-    const { topic } = req.body;
-    const fallbackBlog = {
-      title: `Understanding ${topic}: A Complete Guide`,
-      excerpt: `Explore the fundamentals of ${topic} and discover practical insights that can help you succeed.`,
-      content: `# Understanding ${topic}: A Complete Guide
+    const { prompt } = req.body;
+    const fallbackContent = `<h1>Understanding ${prompt}: A Complete Guide</h1>
 
-## Introduction
+<p>${prompt} is an important concept that affects many aspects of our daily lives. In this comprehensive guide, we'll explore the key aspects of ${prompt} and provide you with actionable insights.</p>
 
-${topic} is an important concept that affects many aspects of our daily lives. In this comprehensive guide, we'll explore the key aspects of ${topic} and provide you with actionable insights.
+<h2>What is ${prompt}?</h2>
 
-## What is ${topic}?
+<p>${prompt} encompasses various elements that work together to create meaningful outcomes. Understanding these components is crucial for success.</p>
 
-${topic} encompasses various elements that work together to create meaningful outcomes. Understanding these components is crucial for success.
+<h2>Key Benefits</h2>
 
-## Key Benefits
+<ul>
+<li><strong>Benefit 1</strong>: Improved understanding and application</li>
+<li><strong>Benefit 2</strong>: Enhanced decision-making capabilities</li>
+<li><strong>Benefit 3</strong>: Better long-term results</li>
+</ul>
 
-- **Benefit 1**: Improved understanding and application
-- **Benefit 2**: Enhanced decision-making capabilities  
-- **Benefit 3**: Better long-term results
+<h2>Practical Applications</h2>
 
-## Practical Applications
+<h3>Getting Started</h3>
 
-### Getting Started
+<ol>
+<li><strong>Step 1</strong>: Define your goals and objectives</li>
+<li><strong>Step 2</strong>: Research best practices and methodologies</li>
+<li><strong>Step 3</strong>: Implement and monitor progress</li>
+</ol>
 
-1. **Step 1**: Define your goals and objectives
-2. **Step 2**: Research best practices and methodologies
-3. **Step 3**: Implement and monitor progress
+<h3>Common Challenges</h3>
 
-### Common Challenges
+<p>Some common challenges include:</p>
+<ul>
+<li>Lack of clear direction</li>
+<li>Insufficient resources</li>
+<li>Time constraints</li>
+</ul>
 
-Some common challenges include:
-- Lack of clear direction
-- Insufficient resources
-- Time constraints
+<h2>Best Practices</h2>
 
-## Best Practices
+<p>To maximize your success with ${prompt}, consider these proven strategies:</p>
 
-To maximize your success with ${topic}, consider these proven strategies:
+<ul>
+<li>Set clear, measurable goals</li>
+<li>Track your progress regularly</li>
+<li>Seek feedback and adjust as needed</li>
+<li>Stay updated with latest trends</li>
+</ul>
 
-- Set clear, measurable goals
-- Track your progress regularly
-- Seek feedback and adjust as needed
-- Stay updated with latest trends
+<h2>Conclusion</h2>
 
-## Conclusion
+<p>${prompt} offers significant opportunities for growth and improvement. By following the strategies outlined in this guide, you can achieve meaningful results and create lasting impact.</p>
 
-${topic} offers significant opportunities for growth and improvement. By following the strategies outlined in this guide, you can achieve meaningful results and create lasting impact.
-
-Remember, success with ${topic} requires patience, persistence, and continuous learning.`,
-      tags: [topic.toLowerCase(), "guide", "tutorial", "best-practices"],
-      suggestedImagePrompt: `Professional illustration showing ${topic} concepts and applications`
-    };
+<p>Remember, success with ${prompt} requires patience, persistence, and continuous learning.</p>`;
 
     res.json({
-      message: "Blog generated successfully (fallback mode)",
-      blog: fallbackBlog,
+      success: true,
+      content: fallbackContent,
+      wordCount: fallbackContent.split(/\s+/).filter(Boolean).length,
+      generatedAt: new Date().toISOString(),
+      note: "Generated using fallback mode due to AI service error",
     });
   }
 };
@@ -183,14 +167,13 @@ const generateBlogImage = async (req, res) => {
     res.json({
       message: "Image generation not implemented yet",
       imageUrl: null,
-      note: "To implement image generation, integrate with DALL-E API or similar service"
+      note: "To implement image generation, integrate with DALL-E API or similar service",
     });
-
   } catch (error) {
-    console.error('Image Generation Error:', error);
-    res.status(500).json({ 
-      message: "Failed to generate image", 
-      error: error.message 
+    console.error("Image Generation Error:", error);
+    res.status(500).json({
+      message: "Failed to generate image",
+      error: error.message,
     });
   }
 };
@@ -199,4 +182,3 @@ module.exports = {
   generateAIBlog,
   generateBlogImage,
 };
-

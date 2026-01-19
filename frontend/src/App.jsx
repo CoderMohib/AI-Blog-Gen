@@ -17,6 +17,7 @@ import EditProfile from "./pages/profile/EditProfile";
 import ProfileView from "./pages/profile/ProfileView";
 import UserSearch from "./pages/UserSearch";
 import UserProfile from "./pages/UserProfile";
+import CreateBlog from "./pages/CreateBlog";
 function App() {
   return (
     <ToastProvider>
@@ -60,6 +61,7 @@ function App() {
               <Route path="/profile/edit" element={<EditProfile />} />
               <Route path="/users/search" element={<UserSearch />} />
               <Route path="/users/:username" element={<UserProfile />} />
+              <Route path="/create-blog" element={<CreateBlog />} />
             </Route>
 
             <Route path="*" element={<Error404 />} />

@@ -4,6 +4,7 @@ const connectDB = require("./db/connect");
 const userRoutes = require("./routes/userRoutes");
 const blogRoutes = require("./routes/blogRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
+const aiRoutes = require("./routes/aiRoutes");
 const compression = require("compression");
 const cookieParser = require("cookie-parser");
 const { initializeSocket } = require("./socket");
@@ -26,7 +27,7 @@ App.use(
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization", "x-auth-token"],
-  })
+  }),
 );
 App.use(express.json());
 App.use(cookieParser());
@@ -39,6 +40,7 @@ App.use("/api", apiLimiter);
 App.use("/", userRoutes);
 App.use("/", blogRoutes);
 App.use("/", notificationRoutes);
+App.use("/", aiRoutes);
 App.use("/public", express.static(path.join(__dirname, "public")));
 
 // Error handler middleware (must be last)
