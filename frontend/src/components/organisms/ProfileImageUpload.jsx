@@ -69,7 +69,7 @@ const ProfileImageUpload = ({
       console.error(err);
       showToast(
         err?.response?.data?.error || "Failed to upload image",
-        "error"
+        "error",
       );
     } finally {
       setIsUploading(false);
@@ -77,16 +77,24 @@ const ProfileImageUpload = ({
   };
 
   const handleRemove = async () => {
+    // Only call API if there's an existing image
+    if (!profileImage?.url) {
+      showToast("No image to remove", "info");
+      setIsModalOpen(false);
+      return;
+    }
+
     try {
       setIsUploading(true);
       await api.delete("/api/user/profile-image");
       onImageUpdate(null);
       setIsModalOpen(false);
+      showToast("Profile image removed successfully", "success");
     } catch (err) {
       console.error(err);
       showToast(
         err?.response?.data?.error || "Failed to remove image",
-        "error"
+        "error",
       );
     } finally {
       setIsUploading(false);
@@ -114,18 +122,18 @@ const ProfileImageUpload = ({
           ) : (
             <div className="w-full h-full relative flex items-center justify-center overflow-hidden rounded-full">
               {/* Base background — conditional based on theme */}
-              <div 
+              <div
                 className={`absolute inset-0 backdrop-blur-sm z-0 ${
-                  isDark ? 'bg-gray-800' : 'bg-gradient-to-br bg-gray-100'
+                  isDark ? "bg-gray-800" : "bg-gradient-to-br bg-gray-100"
                 }`}
               />
 
               {/* Subtle gradient accent */}
-              <div 
+              <div
                 className={`absolute inset-0 bg-gradient-to-br z-0 ${
-                  isDark 
-                    ? 'from-primary/20 to-primary/5' 
-                    : 'from-primary/20 to-primary/5'
+                  isDark
+                    ? "from-primary/20 to-primary/5"
+                    : "from-primary/20 to-primary/5"
                 }`}
               />
 
