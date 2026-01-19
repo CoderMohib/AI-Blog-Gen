@@ -13,18 +13,32 @@ const {
   forgotPassword,
   resetPassword,
 } = require("../controllers/resetPasswordController");
-const { getUserProfile, updateUserProfile, updatePrivacySettings } = require("../controllers/userProfileController");
-const { uploadProfileImage, deleteProfileImage } = require("../controllers/userImageController");
-const { 
-  followUser, 
-  unfollowUser, 
-  getFollowStatus, 
-  getFollowers, 
-  getFollowing, 
-  getFollowRequests, 
-  acceptFollowRequest, 
-  rejectFollowRequest 
+const {
+  getUserProfile,
+  updateUserProfile,
+  updatePrivacySettings,
+} = require("../controllers/userProfileController");
+const {
+  uploadProfileImage,
+  deleteProfileImage,
+} = require("../controllers/userImageController");
+const {
+  followUser,
+  unfollowUser,
+  getFollowStatus,
+  getFollowers,
+  getFollowing,
+  getFollowRequests,
+  acceptFollowRequest,
+  rejectFollowRequest,
 } = require("../controllers/followController");
+const {
+  searchUsers,
+  getUserProfile: getPublicUserProfile,
+  getUserBlogs,
+  getUserFollowers,
+  getUserFollowing,
+} = require("../controllers/userController");
 const upload = require("../middleware/upload");
 router.post("/api/register", validatorRegister, register);
 router.post("/api/login", validateLogin, login);
@@ -45,6 +59,13 @@ router.patch(
 router.delete("/api/user/profile-image", authUser, deleteProfileImage);
 router.put("/api/user/privacy", authUser, updatePrivacySettings);
 
+// User search and public profile routes
+router.get("/api/users/search", authUser, searchUsers);
+router.get("/api/users/:username/profile", authUser, getPublicUserProfile);
+router.get("/api/users/:username/blogs", authUser, getUserBlogs);
+router.get("/api/users/:username/followers", authUser, getUserFollowers);
+router.get("/api/users/:username/following", authUser, getUserFollowing);
+
 // Follow system routes
 router.post("/api/follow/:userId", authUser, followUser);
 router.delete("/api/follow/:userId", authUser, unfollowUser);
@@ -52,7 +73,15 @@ router.get("/api/follow/status/:userId", authUser, getFollowStatus);
 router.get("/api/follow/followers/:userId", authUser, getFollowers);
 router.get("/api/follow/following/:userId", authUser, getFollowing);
 router.get("/api/follow/requests", authUser, getFollowRequests);
-router.put("/api/follow/requests/:requestId/accept", authUser, acceptFollowRequest);
-router.put("/api/follow/requests/:requestId/reject", authUser, rejectFollowRequest);
+router.put(
+  "/api/follow/requests/:requestId/accept",
+  authUser,
+  acceptFollowRequest
+);
+router.put(
+  "/api/follow/requests/:requestId/reject",
+  authUser,
+  rejectFollowRequest
+);
 
 module.exports = router;

@@ -31,34 +31,20 @@ const commentSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
-    updatedAt: {
-      type: Date,
-      default: Date.now,
-    },
   },
-  { 
-    toJSON: { virtuals: true }, 
+  {
+    toJSON: { virtuals: true },
     toObject: { virtuals: true },
-    timestamps: true 
+    timestamps: true,
   }
 );
 
 // Virtual for replies count
-commentSchema.virtual('repliesCount', {
-  ref: 'Comment',
-  localField: '_id',
-  foreignField: 'parentComment',
-  count: true
-});
-
-// Pre-save middleware to update updatedAt
-commentSchema.pre('save', function(next) {
-  this.updatedAt = new Date();
-  next();
+commentSchema.virtual("repliesCount", {
+  ref: "Comment",
+  localField: "_id",
+  foreignField: "parentComment",
+  count: true,
 });
 
 // Index for better query performance
@@ -68,4 +54,3 @@ commentSchema.index({ parentComment: 1 });
 
 const Comment = mongoose.model("Comment", commentSchema);
 module.exports = Comment;
-

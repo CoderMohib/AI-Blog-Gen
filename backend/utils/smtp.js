@@ -43,13 +43,9 @@ async function sendEmail(to, subject, htmlFilePath, replacements = {}) {
     };
     sendSmtpEmail.to = [{ email: to }];
     sendSmtpEmail.subject = subject;
-    sendSmtpEmail.htmlContent = htmlContent;
-
-    console.log("📧 Attempting to send email to:", to);
-    console.log("📧 Using sender:", process.env.FROM_EMAIL);
-    
+    sendSmtpEmail.htmlContent = htmlContent;    
     const response = await apiInstance.sendTransacEmail(sendSmtpEmail);
-    console.log("✅ Email sent successfully:", response.messageId || response);
+    console.log("✅ Email sent successfully:");
     return {success: true, messageId: response.messageId};
   } catch (err) {
     console.error("❌ Error sending email:");

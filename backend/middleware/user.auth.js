@@ -16,7 +16,9 @@ const authUser = async (req, res, next) => {
     }
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    const user = await User.findById(decoded.id).select("-password"); // exclude password
+    const user = await User.findById(decoded.id)
+      .select("-password")
+      .populate("postCount"); // populate virtual post count
     if (!user) {
       return res.status(401).json({ message: "User no longer exists!" });
     }

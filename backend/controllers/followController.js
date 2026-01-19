@@ -1,11 +1,11 @@
-const User = require('../model/userModel');
-const Follow = require('../model/followModel');
-const mongoose = require('mongoose');
-const { 
-  createFollowRequestNotification, 
+const User = require("../model/userModel");
+const Follow = require("../model/followModel");
+const mongoose = require("mongoose");
+const {
+  createFollowRequestNotification,
   createFollowAcceptedNotification,
-  emitNotification 
-} = require('./notificationController');
+  emitNotification,
+} = require("./notificationController");
 
 // Follow a user
 const followUser = async (req, res) => {
@@ -17,7 +17,7 @@ const followUser = async (req, res) => {
     if (currentUserId.toString() === userId) {
       return res.status(400).json({
         success: false,
-        message: "You cannot follow yourself"
+        message: "You cannot follow yourself",
       });
     }
 
@@ -26,20 +26,20 @@ const followUser = async (req, res) => {
     if (!targetUser) {
       return res.status(404).json({
         success: false,
-        message: "User not found"
+        message: "User not found",
       });
     }
 
     // Check if already following
     const existingFollow = await Follow.findOne({
       follower: currentUserId,
-      following: userId
+      following: userId,
     });
 
     if (existingFollow) {
       return res.status(400).json({
         success: false,
-        message: "You are already following this user"
+        message: "You are already following this user",
       });
     }
 
@@ -49,14 +49,17 @@ const followUser = async (req, res) => {
       const followRequest = new Follow({
         follower: currentUserId,
         following: userId,
-        status: 'pending'
+        status: "pending",
       });
 
       await followRequest.save();
 
       // Create notification for follow request
       try {
-        const notification = await createFollowRequestNotification(currentUserId, userId);
+        const notification = await createFollowRequestNotification(
+          currentUserId,
+          userId
+        );
         emitNotification(userId, notification);
       } catch (error) {
         console.error("Error creating follow request notification:", error);
@@ -65,30 +68,24 @@ const followUser = async (req, res) => {
       return res.status(200).json({
         success: true,
         message: "Follow request sent",
-        followStatus: 'pending'
+        followStatus: "pending",
       });
     } else {
       // Public account - follow immediately
       const follow = new Follow({
         follower: currentUserId,
         following: userId,
-        status: 'accepted'
+        status: "accepted",
       });
 
       await follow.save();
 
-      // Update user follower/following counts
-      await User.findByIdAndUpdate(currentUserId, {
-        $addToSet: { following: userId }
-      });
-
-      await User.findByIdAndUpdate(userId, {
-        $addToSet: { followers: currentUserId }
-      });
-
       // Create notification for immediate follow (public account)
       try {
-        const notification = await createFollowAcceptedNotification(userId, currentUserId);
+        const notification = await createFollowAcceptedNotification(
+          userId,
+          currentUserId
+        );
         emitNotification(currentUserId, notification);
       } catch (error) {
         console.error("Error creating follow notification:", error);
@@ -97,7 +94,7 @@ const followUser = async (req, res) => {
       return res.status(200).json({
         success: true,
         message: "Successfully followed user",
-        followStatus: 'following'
+        followStatus: "following",
       });
     }
   } catch (error) {
@@ -105,7 +102,7 @@ const followUser = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Server error following user",
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -119,36 +116,27 @@ const unfollowUser = async (req, res) => {
     // Remove follow relationship
     const follow = await Follow.findOneAndDelete({
       follower: currentUserId,
-      following: userId
+      following: userId,
     });
 
     if (!follow) {
       return res.status(400).json({
         success: false,
-        message: "You are not following this user"
+        message: "You are not following this user",
       });
     }
-
-    // Update user follower/following counts
-    await User.findByIdAndUpdate(currentUserId, {
-      $pull: { following: userId }
-    });
-
-    await User.findByIdAndUpdate(userId, {
-      $pull: { followers: currentUserId }
-    });
 
     res.status(200).json({
       success: true,
       message: "Successfully unfollowed user",
-      followStatus: 'not_following'
+      followStatus: "not_following",
     });
   } catch (error) {
     console.error("Error unfollowing user:", error);
     res.status(500).json({
       success: false,
       message: "Server error unfollowing user",
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -162,30 +150,30 @@ const getFollowStatus = async (req, res) => {
     if (currentUserId.toString() === userId) {
       return res.status(200).json({
         success: true,
-        followStatus: 'self'
+        followStatus: "self",
       });
     }
 
     const follow = await Follow.findOne({
       follower: currentUserId,
-      following: userId
+      following: userId,
     });
 
-    let status = 'not_following';
+    let status = "not_following";
     if (follow) {
-      status = follow.status === 'accepted' ? 'following' : 'pending';
+      status = follow.status === "accepted" ? "following" : "pending";
     }
 
     res.status(200).json({
       success: true,
-      followStatus: status
+      followStatus: status,
     });
   } catch (error) {
     console.error("Error getting follow status:", error);
     res.status(500).json({
       success: false,
       message: "Server error getting follow status",
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -194,7 +182,7 @@ const getFollowStatus = async (req, res) => {
 const getFollowers = async (req, res) => {
   try {
     const { userId } = req.params;
-    const { page = 1, limit = 20, search = '' } = req.query;
+    const { page = 1, limit = 20, search = "" } = req.query;
     const currentUserId = req.user._id;
 
     // Check if user exists
@@ -202,38 +190,35 @@ const getFollowers = async (req, res) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "User not found"
+        message: "User not found",
       });
     }
 
     // Build search query
     let searchQuery = {
       following: userId,
-      status: 'accepted'
+      status: "accepted",
     };
 
     // Add search functionality
     if (search) {
-      const searchRegex = new RegExp(search, 'i');
+      const searchRegex = new RegExp(search, "i");
       searchQuery = {
         ...searchQuery,
         $or: [
-          { 'follower.fullName': searchRegex },
-          { 'follower.username': searchRegex }
-        ]
+          { "follower.fullName": searchRegex },
+          { "follower.username": searchRegex },
+        ],
       };
     }
 
-    // Get total count for pagination
-    const totalFollowers = await Follow.countDocuments({
-      following: userId,
-      status: 'accepted'
-    });
+    // Get total count for pagination using instance method
+    const totalFollowers = await user.getFollowersCount();
 
     // Get followers with pagination
     const skip = (page - 1) * limit;
     const followers = await Follow.find(searchQuery)
-      .populate('follower', 'fullName username profileImage isPrivate')
+      .populate("follower", "fullName username profileImage isPrivate")
       .skip(skip)
       .limit(parseInt(limit))
       .sort({ createdAt: -1 });
@@ -241,21 +226,22 @@ const getFollowers = async (req, res) => {
     const followersWithStatus = await Promise.all(
       followers.map(async (follow) => {
         const follower = follow.follower;
-        let followBackStatus = 'not_following';
-        
+        let followBackStatus = "not_following";
+
         if (currentUserId.toString() !== follower._id.toString()) {
           const followBack = await Follow.findOne({
             follower: currentUserId,
-            following: follower._id
+            following: follower._id,
           });
           if (followBack) {
-            followBackStatus = followBack.status === 'accepted' ? 'following' : 'pending';
+            followBackStatus =
+              followBack.status === "accepted" ? "following" : "pending";
           }
         }
 
         return {
           ...follower.toObject(),
-          followBackStatus
+          followBackStatus,
         };
       })
     );
@@ -268,15 +254,15 @@ const getFollowers = async (req, res) => {
         totalPages: Math.ceil(totalFollowers / limit),
         totalCount: totalFollowers,
         hasNextPage: page < Math.ceil(totalFollowers / limit),
-        hasPrevPage: page > 1
-      }
+        hasPrevPage: page > 1,
+      },
     });
   } catch (error) {
     console.error("Error getting followers:", error);
     res.status(500).json({
       success: false,
       message: "Server error getting followers",
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -285,7 +271,7 @@ const getFollowers = async (req, res) => {
 const getFollowing = async (req, res) => {
   try {
     const { userId } = req.params;
-    const { page = 1, limit = 20, search = '' } = req.query;
+    const { page = 1, limit = 20, search = "" } = req.query;
     const currentUserId = req.user._id;
 
     // Check if user exists
@@ -293,38 +279,35 @@ const getFollowing = async (req, res) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "User not found"
+        message: "User not found",
       });
     }
 
     // Build search query
     let searchQuery = {
       follower: userId,
-      status: 'accepted'
+      status: "accepted",
     };
 
     // Add search functionality
     if (search) {
-      const searchRegex = new RegExp(search, 'i');
+      const searchRegex = new RegExp(search, "i");
       searchQuery = {
         ...searchQuery,
         $or: [
-          { 'following.fullName': searchRegex },
-          { 'following.username': searchRegex }
-        ]
+          { "following.fullName": searchRegex },
+          { "following.username": searchRegex },
+        ],
       };
     }
 
-    // Get total count for pagination
-    const totalFollowing = await Follow.countDocuments({
-      follower: userId,
-      status: 'accepted'
-    });
+    // Get total count for pagination using instance method
+    const totalFollowing = await user.getFollowingCount();
 
     // Get following with pagination
     const skip = (page - 1) * limit;
     const following = await Follow.find(searchQuery)
-      .populate('following', 'fullName username profileImage isPrivate')
+      .populate("following", "fullName username profileImage isPrivate")
       .skip(skip)
       .limit(parseInt(limit))
       .sort({ createdAt: -1 });
@@ -332,21 +315,22 @@ const getFollowing = async (req, res) => {
     const followingWithStatus = await Promise.all(
       following.map(async (follow) => {
         const followingUser = follow.following;
-        let followBackStatus = 'not_following';
-        
+        let followBackStatus = "not_following";
+
         if (currentUserId.toString() !== followingUser._id.toString()) {
           const followBack = await Follow.findOne({
             follower: currentUserId,
-            following: followingUser._id
+            following: followingUser._id,
           });
           if (followBack) {
-            followBackStatus = followBack.status === 'accepted' ? 'following' : 'pending';
+            followBackStatus =
+              followBack.status === "accepted" ? "following" : "pending";
           }
         }
 
         return {
           ...followingUser.toObject(),
-          followBackStatus
+          followBackStatus,
         };
       })
     );
@@ -359,15 +343,15 @@ const getFollowing = async (req, res) => {
         totalPages: Math.ceil(totalFollowing / limit),
         totalCount: totalFollowing,
         hasNextPage: page < Math.ceil(totalFollowing / limit),
-        hasPrevPage: page > 1
-      }
+        hasPrevPage: page > 1,
+      },
     });
   } catch (error) {
     console.error("Error getting following:", error);
     res.status(500).json({
       success: false,
       message: "Server error getting following",
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -379,20 +363,20 @@ const getFollowRequests = async (req, res) => {
 
     const requests = await Follow.find({
       following: currentUserId,
-      status: 'pending'
-    }).populate('follower', 'fullName username profileImage');
+      status: "pending",
+    }).populate("follower", "fullName username profileImage");
 
     res.status(200).json({
       success: true,
       requests: requests,
-      count: requests.length
+      count: requests.length,
     });
   } catch (error) {
     console.error("Error getting follow requests:", error);
     res.status(500).json({
       success: false,
       message: "Server error getting follow requests",
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -406,33 +390,27 @@ const acceptFollowRequest = async (req, res) => {
     if (!request) {
       return res.status(404).json({
         success: false,
-        message: "Follow request not found"
+        message: "Follow request not found",
       });
     }
 
     if (request.following.toString() !== req.user._id.toString()) {
       return res.status(403).json({
         success: false,
-        message: "Unauthorized to accept this request"
+        message: "Unauthorized to accept this request",
       });
     }
 
     // Update request status
-    request.status = 'accepted';
+    request.status = "accepted";
     await request.save();
-
-    // Update user follower/following counts
-    await User.findByIdAndUpdate(request.follower, {
-      $addToSet: { following: request.following }
-    });
-
-    await User.findByIdAndUpdate(request.following, {
-      $addToSet: { followers: request.follower }
-    });
 
     // Create notification for follow request acceptance
     try {
-      const notification = await createFollowAcceptedNotification(request.following, request.follower);
+      const notification = await createFollowAcceptedNotification(
+        request.following,
+        request.follower
+      );
       emitNotification(request.follower, notification);
     } catch (error) {
       console.error("Error creating follow accepted notification:", error);
@@ -440,14 +418,14 @@ const acceptFollowRequest = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Follow request accepted"
+      message: "Follow request accepted",
     });
   } catch (error) {
     console.error("Error accepting follow request:", error);
     res.status(500).json({
       success: false,
       message: "Server error accepting follow request",
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -461,14 +439,14 @@ const rejectFollowRequest = async (req, res) => {
     if (!request) {
       return res.status(404).json({
         success: false,
-        message: "Follow request not found"
+        message: "Follow request not found",
       });
     }
 
     if (request.following.toString() !== req.user._id.toString()) {
       return res.status(403).json({
         success: false,
-        message: "Unauthorized to reject this request"
+        message: "Unauthorized to reject this request",
       });
     }
 
@@ -477,14 +455,14 @@ const rejectFollowRequest = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Follow request rejected"
+      message: "Follow request rejected",
     });
   } catch (error) {
     console.error("Error rejecting follow request:", error);
     res.status(500).json({
       success: false,
       message: "Server error rejecting follow request",
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -507,21 +485,21 @@ const togglePrivacy = async (req, res) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "User not found"
+        message: "User not found",
       });
     }
 
     res.status(200).json({
       success: true,
-      message: `Account privacy updated to ${isPrivate ? 'private' : 'public'}`,
-      isPrivate: user.isPrivate
+      message: `Account privacy updated to ${isPrivate ? "private" : "public"}`,
+      isPrivate: user.isPrivate,
     });
   } catch (error) {
     console.error("Error toggling privacy:", error);
     res.status(500).json({
       success: false,
       message: "Server error updating privacy settings",
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -536,5 +514,5 @@ module.exports = {
   getFollowRequests,
   acceptFollowRequest,
   rejectFollowRequest,
-  togglePrivacy
+  togglePrivacy,
 };

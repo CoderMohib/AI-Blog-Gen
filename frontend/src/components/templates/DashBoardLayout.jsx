@@ -15,7 +15,7 @@ const DashboardLayout = () => {
 
   const menuItems = [
     { name: "Dashboard", icon: <Home />, path: "/dashboard" },
-    { name: "Users", icon: <User />, path: "/users" },
+    { name: "Users", icon: <User />, path: "/users/search" },
     { name: "Settings", icon: <Settings />, path: "/settings" },
   ];
 

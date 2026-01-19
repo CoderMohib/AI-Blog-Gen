@@ -15,6 +15,8 @@ import PublicRoute from "./components/molecules/PublicRoute";
 import DashboardLayout from "./components/templates/DashBoardLayout";
 import EditProfile from "./pages/profile/EditProfile";
 import ProfileView from "./pages/profile/ProfileView";
+import UserSearch from "./pages/UserSearch";
+import UserProfile from "./pages/UserProfile";
 function App() {
   return (
     <ToastProvider>
@@ -56,6 +58,8 @@ function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/profile" element={<ProfileView />} />
               <Route path="/profile/edit" element={<EditProfile />} />
+              <Route path="/users/search" element={<UserSearch />} />
+              <Route path="/users/:username" element={<UserProfile />} />
             </Route>
 
             <Route path="*" element={<Error404 />} />

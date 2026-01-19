@@ -51,26 +51,9 @@ const userSchema = new mongoose.Schema(
       url: { type: String, default: "" }, // The image URL to display
       public_id: { type: String, default: "" }, // The Cloudinary ID used for deletion
     },
-    posts: {
-      type: Number,
-      default: 0,
-    },
-    // Follow system fields
-    followers: [{ 
-      type: mongoose.Schema.Types.Mixed, 
-      ref: 'User'
-    }],
-    following: [{ 
-      type: mongoose.Schema.Types.Mixed, 
-      ref: 'User'
-    }],
-    followRequests: [{ 
-      type: mongoose.Schema.Types.Mixed, 
-      ref: 'User'
-    }],
-    isPrivate: { 
-      type: Boolean, 
-      default: false 
+    isPrivate: {
+      type: Boolean,
+      default: false,
     },
     isActive: { type: Boolean, default: false },
     createdAt: {
@@ -81,85 +64,41 @@ const userSchema = new mongoose.Schema(
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
-// Pre-save middleware to clean invalid ObjectIds
-userSchema.pre('save', function(next) {
-  // Clean followers array
-  if (this.followers && Array.isArray(this.followers)) {
-    this.followers = this.followers.filter(follower => {
-      return mongoose.Types.ObjectId.isValid(follower);
-    });
-  }
-
-  // Clean following array
-  if (this.following && Array.isArray(this.following)) {
-    this.following = this.following.filter(following => {
-      return mongoose.Types.ObjectId.isValid(following);
-    });
-  }
-
-  // Clean followRequests array
-  if (this.followRequests && Array.isArray(this.followRequests)) {
-    this.followRequests = this.followRequests.filter(request => {
-      return mongoose.Types.ObjectId.isValid(request);
-    });
-  }
-
-  next();
+// Virtual for post count (computed from Blog collection)
+userSchema.virtual("postCount", {
+  ref: "Blog",
+  localField: "_id",
+  foreignField: "author",
+  count: true,
 });
 
-// Pre-find middleware to clean invalid ObjectIds when reading
-userSchema.pre(['find', 'findOne', 'findOneAndUpdate'], function(next) {
-  // This will be applied to all find operations
-  next();
-});
+// Instance method to get followers count
+userSchema.methods.getFollowersCount = async function () {
+  const Follow = require("./followModel");
+  return await Follow.countDocuments({
+    following: this._id,
+    status: "accepted",
+  });
+};
 
-// Post-find middleware to clean data after reading
-userSchema.post(['find', 'findOne', 'findOneAndUpdate'], function(docs) {
-  if (!docs) return;
-  
-  const processDoc = (doc) => {
-    if (!doc) return;
-    
-    // Clean followers array
-    if (doc.followers && Array.isArray(doc.followers)) {
-      doc.followers = doc.followers.filter(follower => {
-        try {
-          return mongoose.Types.ObjectId.isValid(follower);
-        } catch (e) {
-          return false;
-        }
-      });
-    }
+// Instance method to get following count
+userSchema.methods.getFollowingCount = async function () {
+  const Follow = require("./followModel");
+  return await Follow.countDocuments({
+    follower: this._id,
+    status: "accepted",
+  });
+};
 
-    // Clean following array
-    if (doc.following && Array.isArray(doc.following)) {
-      doc.following = doc.following.filter(following => {
-        try {
-          return mongoose.Types.ObjectId.isValid(following);
-        } catch (e) {
-          return false;
-        }
-      });
-    }
-
-    // Clean followRequests array
-    if (doc.followRequests && Array.isArray(doc.followRequests)) {
-      doc.followRequests = doc.followRequests.filter(request => {
-        try {
-          return mongoose.Types.ObjectId.isValid(request);
-        } catch (e) {
-          return false;
-        }
-      });
-    }
-  };
-
-  if (Array.isArray(docs)) {
-    docs.forEach(processDoc);
-  } else {
-    processDoc(docs);
-  }
-});
+// Instance method to get both counts at once (more efficient)
+userSchema.methods.getFollowCounts = async function () {
+  const Follow = require("./followModel");
+  const [followersCount, followingCount] = await Promise.all([
+    Follow.countDocuments({ following: this._id, status: "accepted" }),
+    Follow.countDocuments({ follower: this._id, status: "accepted" }),
+  ]);
+  return { followersCount, followingCount };
+};
 
 // Pre-save hook to hash password
 userSchema.pre("save", async function (next) {
@@ -167,35 +106,6 @@ userSchema.pre("save", async function (next) {
 
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
-  next();
-});
-
-// Pre-save hook to clean up invalid ObjectIds in arrays
-userSchema.pre("save", function (next) {
-  // Clean followers array
-  if (this.followers && Array.isArray(this.followers)) {
-    this.followers = this.followers.filter(id => {
-      if (!id) return false;
-      return mongoose.Types.ObjectId.isValid(id);
-    });
-  }
-  
-  // Clean following array
-  if (this.following && Array.isArray(this.following)) {
-    this.following = this.following.filter(id => {
-      if (!id) return false;
-      return mongoose.Types.ObjectId.isValid(id);
-    });
-  }
-  
-  // Clean followRequests array
-  if (this.followRequests && Array.isArray(this.followRequests)) {
-    this.followRequests = this.followRequests.filter(id => {
-      if (!id) return false;
-      return mongoose.Types.ObjectId.isValid(id);
-    });
-  }
-  
   next();
 });
 

@@ -42,7 +42,7 @@ const SignUpForm = () => {
         (value) => {
           if (!value) return false;
           return passwordRules.every((rule) => rule.regex.test(value));
-        }
+        },
       ),
     confirmPassword: Yup.string()
       .oneOf([Yup.ref("password"), null], "Passwords must match")
@@ -59,12 +59,12 @@ const SignUpForm = () => {
       showToast(
         res.data.message || "User registered successfully",
         "success",
-        () => navigate("/login")
+        () => navigate("/login"),
       );
     } catch (err) {
       showToast(
-        err?.message || "Registration failed",
-        "error" // type
+        err?.response?.data?.message || err?.message || "Registration failed",
+        "error", // type
       );
     } finally {
       setSubmitting(false);

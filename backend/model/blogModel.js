@@ -25,10 +25,12 @@ const blogSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    tags: [{
-      type: String,
-      trim: true,
-    }],
+    tags: [
+      {
+        type: String,
+        trim: true,
+      },
+    ],
     status: {
       type: String,
       enum: ["draft", "published", "archived"],
@@ -52,42 +54,27 @@ const blogSchema = new mongoose.Schema(
     aiPrompt: {
       type: String,
     },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
-    updatedAt: {
-      type: Date,
-      default: Date.now,
-    },
   },
-  { 
-    toJSON: { virtuals: true }, 
+  {
+    toJSON: { virtuals: true },
     toObject: { virtuals: true },
-    timestamps: true 
+    timestamps: true,
   }
 );
 
 // Virtual for comment count
-blogSchema.virtual('commentCount', {
-  ref: 'Comment',
-  localField: '_id',
-  foreignField: 'blog',
-  count: true
-});
-
-// Pre-save middleware to update updatedAt
-blogSchema.pre('save', function(next) {
-  this.updatedAt = new Date();
-  next();
+blogSchema.virtual("commentCount", {
+  ref: "Comment",
+  localField: "_id",
+  foreignField: "blog",
+  count: true,
 });
 
 // Index for better query performance
 blogSchema.index({ author: 1, createdAt: -1 });
 blogSchema.index({ status: 1, publishedAt: -1 });
 blogSchema.index({ tags: 1 });
-blogSchema.index({ title: 'text', content: 'text' });
+blogSchema.index({ title: "text", content: "text" });
 
 const Blog = mongoose.model("Blog", blogSchema);
 module.exports = Blog;
-
